@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Drops - Admin Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-4 md:p-10">
+
+    <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
+        
+        <div class="md:col-span-1">
+            <div class="bg-white p-6 rounded-2xl shadow-lg sticky top-10">
+                <h2 id="form-title" class="text-2xl font-black mb-6 text-[#4A3228] uppercase">Add Product</h2>
+                
+                <form id="product-form" class="space-y-4">
+                    <input type="hidden" id="product-id">
+                    
+                    <div>
+                        <label class="text-xs font-bold text-gray-400 uppercase">Script Title (e.g., Jeera)</label>
+                        <input type="text" id="t1" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-[#E0A142] outline-none" required>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-gray-400 uppercase">Main Name (e.g., Chawal)</label>
+                        <input type="text" id="t2" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-[#E0A142] outline-none" required>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-bold text-gray-400 uppercase">Price (₹)</label>
+                            <input type="number" id="price" class="w-full p-3 border rounded-xl" required>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-400 uppercase">Old Price</label>
+                            <input type="number" id="oldPrice" class="w-full p-3 border rounded-xl">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-gray-400 uppercase">Image URL (Transparent PNG)</label>
+                        <input type="text" id="imgUrl" class="w-full p-3 border rounded-xl" required>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-gray-400 uppercase">Card Color</label>
+                        <select id="color" class="w-full p-3 border rounded-xl">
+                            <option value="#859431">Green (Default)</option>
+                            <option value="#E0A142">Orange</option>
+                            <option value="#4A3228">Dark Brown</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-gray-400 uppercase">Description</label>
+                        <textarea id="desc" rows="3" class="w-full p-3 border rounded-xl"></textarea>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="w-full bg-[#E0A142] text-white py-4 rounded-xl font-black uppercase tracking-widest shadow-lg hover:bg-[#c98e35] transition-all">
+                        Save Product
+                    </button>
+                    
+                    <button type="button" id="cancel-btn" class="hidden w-full bg-gray-200 text-gray-600 py-2 rounded-xl font-bold uppercase text-sm mt-2">
+                        Cancel Edit
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="md:col-span-2">
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="p-6 border-b">
+                    <h2 class="text-2xl font-black text-[#4A3228] uppercase">Manage Products</h2>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-50 text-gray-400 text-[10px] uppercase font-bold">
+                            <tr>
+                                <th class="px-6 py-4">Product</th>
+                                <th class="px-6 py-4">Price</th>
+                                <th class="px-6 py-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-product-list" class="divide-y divide-gray-100">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXoEgWEZM36nzBO0YmCVehTksNHzd3rT8",
+            authDomain: "happy-drops-9bba9.firebaseapp.com",
+            projectId: "happy-drops-9bba9",
+            storageBucket: "happy-drops-9bba9.firebasestorage.app",
+            messagingSenderId: "337314308860",
+            appId: "1:337314308860:web:05f148a54b5678dac2ad79"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const productForm = document.getElementById('product-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const formTitle = document.getElementById('form-title');
+        const adminList = document.getElementById('admin-product-list');
+
+        // 1. Listen for Products and Update Table
+        db.collection("products").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
+            adminList.innerHTML = "";
+            snapshot.forEach((doc) => {
+                const p = doc.data();
+                const id = doc.id;
+
+                adminList.innerHTML += `
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-4">
+                                <img src="${p.image}" class="w-12 h-12 object-contain bg-gray-100 rounded-lg p-1">
+                                <div>
+                                    <div class="font-bold text-[#4A3228]">${p.title2}</div>
+                                    <div class="text-xs text-gray-400">${p.title1}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 font-bold text-gray-700">₹${p.price}</td>
+                        <td class="px-6 py-4 text-right">
+                            <button onclick="editProduct('${id}')" class="text-blue-500 hover:text-blue-700 font-bold text-xs uppercase mr-4">Edit</button>
+                            <button onclick="deleteProduct('${id}')" class="text-red-500 hover:text-red-700 font-bold text-xs uppercase">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        });
+
+        // 2. Add or Update Product
+        productForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('product-id').value;
+            
+            const productData = {
+                title1: document.getElementById('t1').value,
+                title2: document.getElementById('t2').value,
+                price: document.getElementById('price').value,
+                oldPrice: document.getElementById('oldPrice').value,
+                image: document.getElementById('imgUrl').value,
+                bgColor: document.getElementById('color').value,
+                description: document.getElementById('desc').value,
+                rating: "4.5"
+            };
+
+            if (id) {
+                // Update existing
+                await db.collection("products").doc(id).update(productData);
+                alert("Updated Successfully!");
+            } else {
+                // Add new
+                productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                await db.collection("products").add(productData);
+                alert("Added Successfully!");
+            }
+
+            resetForm();
+        });
+
+        // 3. Delete Product
+        window.deleteProduct = async (id) => {
+            if (confirm("Are you sure you want to delete this product?")) {
+                await db.collection("products").doc(id).delete();
+            }
+        };
+
+        // 4. Edit Product (Load data into form)
+        window.editProduct = async (id) => {
+            const doc = await db.collection("products").doc(id).get();
+            const p = doc.data();
+
+            document.getElementById('product-id').value = id;
+            document.getElementById('t1').value = p.title1;
+            document.getElementById('t2').value = p.title2;
+            document.getElementById('price').value = p.price;
+            document.getElementById('oldPrice').value = p.oldPrice;
+            document.getElementById('imgUrl').value = p.image;
+            document.getElementById('color').value = p.bgColor;
+            document.getElementById('desc').value = p.description;
+
+            formTitle.innerText = "Edit Product";
+            submitBtn.innerText = "Update Product";
+            cancelBtn.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        // Reset Form
+        function resetForm() {
+            productForm.reset();
+            document.getElementById('product-id').value = "";
+            formTitle.innerText = "Add Product";
+            submitBtn.innerText = "Save Product";
+            cancelBtn.classList.add('hidden');
+        }
+
+        cancelBtn.addEventListener('click', resetForm);
+
+    </script>
+</body>
+</html>
