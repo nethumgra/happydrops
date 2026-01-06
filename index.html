@@ -135,9 +135,10 @@
 
         <nav class="flex flex-col gap-6">
             <a href="#" class="text-[#4A3228] text-lg font-bold hover:translate-x-2 transition-transform uppercase">Home</a>
-            <a href="#" class="text-[#4A3228] text-lg font-bold hover:translate-x-2 transition-transform uppercase">Menu</a>
-            <a href="#" class="text-[#4A3228] text-lg font-bold hover:translate-x-2 transition-transform uppercase">Offers</a>
-            <a href="#" class="text-[#4A3228] text-lg font-bold hover:translate-x-2 transition-transform uppercase">Contact</a>
+            <a href="menu.html" class="text-[#4A3228] text-lg font-bold hover:translate-x-2 transition-transform uppercase">Menu</a>
+ <a href="about.html" class="text-[#4A3228] text-lg font-bold hover:translate-x-2 transition-transform uppercase">About Us</a>
+
+            <a href="contact.html" class="text-[#4A3228] text-lg font-bold hover:translate-x-2 transition-transform uppercase">Contact</a>
         </nav>
 
         <div class="mt-20">
@@ -172,10 +173,14 @@
                     Aromatic, soft, and tender chunks of lamb layered with rice infused with the flavors of spices. The delicate blend of cardamom, cloves, and cinnamon creates a symphony of tastes in every bite.
                 </p>
             </div>
-            <div class="flex flex-wrap gap-4">
-                <button class="bg-[#E0A142] text-white px-12 py-4 rounded-full font-bold shadow-lg shadow-orange-200 hover:bg-[#c98e35] transition-all transform hover:-translate-y-1">ORDER NOW</button>
-                <button class="border-2 border-[#E0A142] text-[#E0A142] px-10 py-4 rounded-full font-bold hover:bg-orange-50 transition-all uppercase">EXPLORE MORE</button>
-            </div>
+           <div class="hidden lg:flex flex-wrap gap-4">
+    <button class="bg-[#E0A142] text-white px-12 py-4 rounded-full font-bold shadow-lg shadow-orange-200 hover:bg-[#c98e35] transition-all transform hover:-translate-y-1">
+        ORDER NOW
+    </button>
+    <button class="border-2 border-[#E0A142] text-[#E0A142] px-10 py-4 rounded-full font-bold hover:bg-orange-50 transition-all uppercase">
+        EXPLORE MORE
+    </button>
+</div>
         </div>
     </div>
 
@@ -221,6 +226,51 @@
         </div>
 </section>
 
+<div id="order-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-[40px] overflow-hidden shadow-2xl transform transition-all">
+        <div class="p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-black text-[#4A3228] uppercase">Complete Your Order</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-black text-2xl">✕</button>
+            </div>
+
+            <form id="order-confirm-form" class="space-y-4">
+                <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-2xl mb-4">
+                    <img id="modal-img" src="" class="w-16 h-16 object-cover rounded-xl shadow-md">
+                    <div>
+                        <h4 id="modal-title" class="font-black text-[#4A3228]">Product Name</h4>
+                        <p id="modal-price" class="text-sm font-bold text-[#E0A142]">₹0.00</p>
+                    </div>
+                </div>
+
+                <div class="flex p-1 bg-gray-100 rounded-2xl">
+                    <button type="button" id="retail-btn" onclick="setOrderType('retail')" class="flex-1 py-3 rounded-xl font-bold text-sm transition-all bg-white shadow-sm text-[#4A3228]">Retail</button>
+                    <button type="button" id="wholesale-btn" onclick="setOrderType('wholesale')" class="flex-1 py-3 rounded-xl font-bold text-sm transition-all text-gray-500">Wholesale</button>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" id="cust-name" placeholder="Full Name" class="w-full p-4 border rounded-2xl outline-none focus:ring-2 focus:ring-[#E0A142]" required>
+                    <input type="tel" id="cust-phone" placeholder="Phone Number" class="w-full p-4 border rounded-2xl outline-none focus:ring-2 focus:ring-[#E0A142]" required>
+                </div>
+                
+                <textarea id="cust-address" placeholder="Delivery Address" rows="2" class="w-full p-4 border rounded-2xl outline-none focus:ring-2 focus:ring-[#E0A142]" required></textarea>
+
+                <div class="flex items-center justify-between bg-gray-50 p-4 rounded-2xl">
+                    <span class="font-bold text-[#4A3228]">Quantity:</span>
+                    <div class="flex items-center gap-4">
+                        <input type="number" id="order-qty" value="1" min="1" class="w-20 p-2 text-center font-black bg-transparent border-b-2 border-[#4A3228] outline-none">
+                    </div>
+                </div>
+                <p id="qty-warning" class="text-[10px] text-red-500 font-bold hidden text-center uppercase tracking-widest">* Wholesale orders must be 10 or more</p>
+
+                <button type="submit" class="w-full bg-[#4A3228] text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl hover:bg-black transition-all">
+                    Confirm & Order via WhatsApp
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
     // Firebase Config
     const firebaseConfig = {
@@ -235,48 +285,136 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Data load kirima
     const productContainer = document.getElementById('product-list');
+    let currentType = 'retail';
 
+    // 1. Data Load & Render
     db.collection("products").onSnapshot((snapshot) => {
-        productContainer.innerHTML = ""; // Clear existing
+        productContainer.innerHTML = ""; 
         snapshot.forEach((doc) => {
             const p = doc.data();
-            const card = `
-                <div class="rounded-[40px] p-8 text-white text-center shadow-2xl relative flex flex-col items-center" style="background-color: ${p.bgColor || '#859431'}">
-                    <div class="product-img-container w-full mb-4">
-                        <img src="${p.image}" class="w-56 h-auto mx-auto object-contain" alt="${p.title2}">
-                    </div>
+           const card = `
+<div class="group relative w-full max-w-[350px] mx-auto mt-24 transition-all duration-500 hover:-translate-y-4"> 
+    <div class="absolute left-1/2 transform -translate-x-1/2 -top-20 z-20 transition-all duration-500 group-hover:scale-110">
+        <div class="w-44 h-44 rounded-full border-[6px] border-white shadow-2xl overflow-hidden bg-white flex items-center justify-center">
+            <img src="${p.image}" class="w-full h-full object-cover" alt="${p.title2}">
+        </div>
+    </div>
 
-                    <div class="absolute top-10 right-6 bg-white text-gray-800 p-3 rounded-full shadow-lg border-2 border-dashed border-gray-200">
-                        <div class="text-[10px] text-gray-400 font-bold uppercase leading-none">Price</div>
-                        <div class="text-sm font-black">₹${p.price}</div>
-                        <div class="text-[10px] line-through text-gray-300">₹${p.oldPrice}</div>
-                    </div>
+    <div class="rounded-[40px] p-8 pt-28 text-white text-center shadow-2xl relative flex flex-col items-center z-10 transition-all duration-500 group-hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)]" 
+         style="background-color: ${p.bgColor || '#4A3228'}">
+        
+        <div class="absolute top-10 right-6 bg-white text-gray-800 p-3 rounded-2xl shadow-lg border-2 border-dashed border-gray-100 z-30">
+            <div class="text-[10px] text-gray-400 font-bold uppercase leading-none">Price</div>
+            <div class="text-sm font-black">₹${p.price}</div>
+        </div>
 
-                    <div class="mt-2">
-                        <p class="script-font text-4xl mb-0">${p.title1}</p>
-                        <h4 class="text-5xl font-black mb-4 tracking-tighter uppercase">${p.title2}</h4>
-                        
-                        <div class="flex justify-center items-center gap-1 mb-4">
-                            <span class="text-yellow-300 text-lg">★★★★★</span>
-                            <span class="font-bold ml-1">${p.rating}</span>
-                        </div>
+        <div class="mt-4 w-full">
+            <p class="script-font text-3xl mb-1 leading-tight">${p.title1}</p>
+            
+            <h4 class="text-4xl font-black mb-4 tracking-tighter uppercase leading-[0.9] break-words">
+                ${p.title2}
+            </h4>
+            
+            <div class="flex justify-center items-center gap-1 mb-4">
+                <span class="text-yellow-300 text-lg">★★★★★</span>
+                <span class="font-bold ml-1">${p.rating || '4.5'}</span>
+            </div>
 
-                        <p class="text-sm opacity-90 leading-relaxed mb-8 line-clamp-3">
-                            ${p.description}
-                        </p>
+            <p class="text-sm opacity-90 leading-relaxed mb-8 line-clamp-3 h-16 overflow-hidden">
+                ${p.description}
+            </p>
 
-                        <button class="bg-[#3D2B1F] text-white px-10 py-4 rounded-2xl text-xs font-black uppercase tracking-widest hover:scale-105 transition-transform">
-                            Order Now
-                        </button>
-                    </div>
-                </div>
-            `;
+            <button onclick="openOrderModal('${p.title2}', '${p.price}', '${p.image}')" 
+                    class="bg-[#3D2B1F] text-white px-10 py-4 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-white hover:text-[#3D2B1F] transition-all transform active:scale-95 shadow-lg">
+                Order Now
+            </button>
+        </div>
+    </div>
+</div>
+`;
             productContainer.innerHTML += card;
         });
     });
+
+    // 2. Modal Functions
+    function openOrderModal(title, price, img) {
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-price').innerText = '₹' + price;
+        document.getElementById('modal-img').src = img;
+        document.getElementById('order-modal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // Stop scroll
+    }
+
+    function closeModal() {
+        document.getElementById('order-modal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+
+    // 3. Wholesale/Retail Logic
+    function setOrderType(type) {
+        currentType = type;
+        const retailBtn = document.getElementById('retail-btn');
+        const wholesaleBtn = document.getElementById('wholesale-btn');
+        const qtyInput = document.getElementById('order-qty');
+        const warning = document.getElementById('qty-warning');
+
+        if (type === 'wholesale') {
+            wholesaleBtn.classList.add('bg-white', 'shadow-sm', 'text-[#4A3228]');
+            retailBtn.classList.remove('bg-white', 'shadow-sm', 'text-[#4A3228]');
+            retailBtn.classList.add('text-gray-500');
+            qtyInput.value = 10;
+            qtyInput.min = 10;
+            warning.classList.remove('hidden');
+        } else {
+            retailBtn.classList.add('bg-white', 'shadow-sm', 'text-[#4A3228]');
+            wholesaleBtn.classList.remove('bg-white', 'shadow-sm', 'text-[#4A3228]');
+            wholesaleBtn.classList.add('text-gray-500');
+            qtyInput.value = 1;
+            qtyInput.min = 1;
+            warning.classList.add('hidden');
+        }
+    }
+
+   // 4. Form Submit (Order Handling - Firestore Edition)
+document.getElementById('order-confirm-form').onsubmit = async function(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('cust-name').value;
+    const phone = document.getElementById('cust-phone').value;
+    const addr = document.getElementById('cust-address').value;
+    const qty = document.getElementById('order-qty').value;
+    const pName = document.getElementById('modal-title').innerText;
+
+    // Validation for Wholesale
+    if (currentType === 'wholesale' && qty < 10) {
+        alert("Wholesale orders must be at least 10 units!");
+        return;
+    }
+
+    try {
+        // Order එක Firestore එකට එකතු කිරීම
+        await db.collection("orders").add({
+            customerName: name,
+            phoneNumber: phone,
+            address: addr,
+            productName: pName,
+            orderType: currentType,
+            quantity: parseInt(qty),
+            status: "Pending", // අලුත් order එකක් නිසා
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        alert("Order Placed Successfully! Admin will contact you.");
+        closeModal();
+        document.getElementById('order-confirm-form').reset();
+    } catch (error) {
+        console.error("Order Error: ", error);
+        alert("Something went wrong. Please try again.");
+    }
+};
 </script>
+
 <section class="relative bg-white py-24 px-10 overflow-hidden">
     
     <div class="absolute top-0 left-0 w-full overflow-hidden leading-[0] z-0">
@@ -322,9 +460,9 @@
                 </div>
             </div>
 
-            <button class="border-2 border-[#4A3228] text-[#4A3228] px-10 py-4 rounded-full font-black uppercase text-sm hover:bg-[#4A3228] hover:text-white transition-all">
+        <a href="about.html"> <button class="border-2 border-[#4A3228] text-[#4A3228] px-10 py-4 rounded-full font-black uppercase text-sm hover:bg-[#4A3228] hover:text-white transition-all">
                 Learn More
-            </button>
+            </button></a>
         </div>
 
         <div>
@@ -645,7 +783,7 @@
 
 <section class="relative w-full bg-[#4A3228] pb-16 pt-32 px-10 overflow-hidden">
     
-    <div class="absolute top-0 left-0 w-full overflow-hidden leading-[0] z-0">
+    <div class="absolute top-0 left-0 right-2 w-full overflow-hidden leading-[0] z-0">
         <svg viewBox="0 0 1200 120" preserveAspectRatio="none" 
              class="relative block w-[102%] h-[80px] md:h-[120px] -left-[1%]" 
              style="margin-top: -1px;">
@@ -681,9 +819,15 @@
 </section>
 
 <section class="py-24 px-10 bg-white relative z-10 overflow-hidden">
-    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+    <div class="absolute inset-0 z-0 lg:hidden">
+        <img src="https://i.ibb.co/zh1fXLrr/Every-Drop-Make-happy-2.png" 
+             class="w-full h-full object-cover opacity-10" 
+             alt="Background">
+    </div>
+
+    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center relative z-10">
         
-        <div class="w-full h-full">
+        <div class="w-full h-full hidden lg:block">
             <img src="https://i.ibb.co/zh1fXLrr/Every-Drop-Make-happy-2.png" 
                  alt="Contact Happy Drops" 
                  class="w-full h-full object-cover">
@@ -698,33 +842,69 @@
                 <p class="text-gray-400 mt-4 text-sm uppercase tracking-widest font-bold">We’d love to hear from you!</p>
             </div>
 
-            <div class="bg-gray-50 p-8 md:p-10 rounded-[30px] border border-gray-100">
-                <form id="contact-form" class="space-y-5">
-                    <div class="grid md:grid-cols-2 gap-5">
-                        <div class="flex flex-col gap-2">
-                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Name</label>
-                            <input type="text" class="w-full bg-white border-none p-4 rounded-xl focus:ring-2 focus:ring-[#E0A142] outline-none" placeholder="Your Name" required>
-                        </div>
-                        <div class="flex flex-col gap-2">
-                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Email</label>
-                            <input type="email" class="w-full bg-white border-none p-4 rounded-xl focus:ring-2 focus:ring-[#E0A142] outline-none" placeholder="Email Address" required>
-                        </div>
-                    </div>
-                    
-                    <div class="flex flex-col gap-2">
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Message</label>
-                        <textarea rows="4" class="w-full bg-white border-none p-4 rounded-xl focus:ring-2 focus:ring-[#E0A142] outline-none" placeholder="How can we help you?" required></textarea>
-                    </div>
-                    
-                    <button type="submit" class="w-full bg-[#E0A142] text-white py-5 rounded-xl font-black uppercase tracking-widest hover:bg-[#4A3228] transition-all transform active:scale-95 shadow-lg shadow-orange-100">
-                        Send Message
-                    </button>
-                </form>
+            <div class="bg-white/80 backdrop-blur-sm md:bg-gray-50 p-8 md:p-10 rounded-[30px] border border-gray-100 shadow-xl lg:shadow-none">
+               <form id="contact-form" class="space-y-5">
+    <div class="grid md:grid-cols-2 gap-5">
+        <div class="flex flex-col gap-2">
+            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Name</label>
+            <input type="text" id="contact-name" class="w-full bg-white border border-gray-100 p-4 rounded-xl focus:ring-2 focus:ring-[#E0A142] outline-none" placeholder="Your Name" required>
+        </div>
+        <div class="flex flex-col gap-2">
+            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Email</label>
+            <input type="email" id="contact-email" class="w-full bg-white border border-gray-100 p-4 rounded-xl focus:ring-2 focus:ring-[#E0A142] outline-none" placeholder="Email Address" required>
+        </div>
+    </div>
+    
+    <div class="flex flex-col gap-2">
+        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Message</label>
+        <textarea id="contact-msg" rows="4" class="w-full bg-white border border-gray-100 p-4 rounded-xl focus:ring-2 focus:ring-[#E0A142] outline-none" placeholder="How can we help you?" required></textarea>
+    </div>
+    
+    <button type="submit" id="contact-submit-btn" class="w-full bg-[#E0A142] text-white py-5 rounded-xl font-black uppercase tracking-widest hover:bg-[#4A3228] transition-all transform active:scale-95 shadow-lg shadow-orange-100">
+        Send Message
+    </button>
+</form>
             </div>
         </div>
-
     </div>
 </section>
+
+<script>
+    document.getElementById('contact-form').onsubmit = async function(e) {
+    e.preventDefault(); // Page එක refresh වෙන එක නවත්තන්න
+    
+    const submitBtn = document.getElementById('contact-submit-btn');
+    const name = document.getElementById('contact-name').value;
+    const email = document.getElementById('contact-email').value;
+    const message = document.getElementById('contact-msg').value;
+
+    // බටන් එක disable කරන්න දෙපාරක් click නොවෙන්න
+    submitBtn.innerText = "SENDING...";
+    submitBtn.disabled = true;
+
+    try {
+        // Firestore එකේ 'contact_messages' කියන තැනට දත්ත යැවීම
+        await db.collection("contact_messages").add({
+            name: name,
+            email: email,
+            message: message,
+            status: "New", // ඇඩ්මින්ට පස්සේ බලාගන්න ලේසි වෙන්න
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        alert("Message sent successfully! Admin will reply soon.");
+        document.getElementById('contact-form').reset(); // Form එක හිස් කරන්න
+        
+    } catch (error) {
+        console.error("Error sending message: ", error);
+        alert("Something went wrong. Please try again.");
+    } finally {
+        // බටන් එක ආයෙත් සාමාන්‍ය තත්වයට පත් කිරීම
+        submitBtn.innerText = "SEND MESSAGE";
+        submitBtn.disabled = false;
+    }
+};
+</script>
 
 <footer class="hidden md:block bg-[#3D2B1F] text-white pt-24 pb-8 px-10 relative">
     
@@ -803,28 +983,45 @@
     </div>
 </footer>
 
-<div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex justify-around items-center py-3 z-[100] md:hidden shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+<div class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-100 flex justify-around items-center py-3 z-[100] md:hidden shadow-[0_-8px_30px_rgba(0,0,0,0.08)]">
     
-    <a href="index.html" class="flex flex-col items-center gap-1 group">
-        <div class="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center group-hover:bg-[#E0A142] transition-all">
-            <svg class="w-6 h-6 text-[#E0A142] group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <a href="index.html" class="flex flex-col items-center gap-1 group transition-all">
+        <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center group-hover:bg-[#E0A142] group-active:scale-90 transition-all">
+            <svg class="w-5 h-5 text-[#E0A142] group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
             </svg>
         </div>
-        <span class="text-[10px] font-black uppercase tracking-widest text-gray-500 group-hover:text-[#4A3228]">Home</span>
+        <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 group-hover:text-[#4A3228]">Home</span>
     </a>
 
-    <a href="#" class="flex flex-col items-center gap-1 group">
-        <div class="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center group-hover:bg-[#859431] transition-all">
-            <svg class="w-6 h-6 text-[#859431] group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <a href="menu.html" class="flex flex-col items-center gap-1 group transition-all">
+        <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center group-hover:bg-[#859431] group-active:scale-90 transition-all">
+            <svg class="w-5 h-5 text-[#859431] group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+            </svg>
+        </div>
+        <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 group-hover:text-[#4A3228]">Menu</span>
+    </a>
+
+    <a href="menu.html" class="flex flex-col items-center gap-1 group transition-all">
+        <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center group-hover:bg-[#E0A142] group-active:scale-90 transition-all">
+            <svg class="w-5 h-5 text-[#E0A142] group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
             </svg>
         </div>
-        <span class="text-[10px] font-black uppercase tracking-widest text-gray-500 group-hover:text-[#4A3228]">Store</span>
+        <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 group-hover:text-[#4A3228]">Store</span>
+    </a>
+
+    <a href="about.html" class="flex flex-col items-center gap-1 group transition-all">
+        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center group-hover:bg-[#4A3228] group-active:scale-90 transition-all">
+            <svg class="w-5 h-5 text-[#4A3228] group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+        </div>
+        <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 group-hover:text-[#4A3228]">About</span>
     </a>
 
 </div>
-
 <style>
     @media (max-width: 768px) {
         body { padding-bottom: 80px; }

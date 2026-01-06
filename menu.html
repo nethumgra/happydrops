@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu - Happy Drops Premium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Montserrat:wght@900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f9fafb; margin: 0; padding: 0; }
+        .script-font { font-family: 'Dancing Script', cursive; }
+        .font-montserrat { font-family: 'Montserrat', sans-serif; }
+
+        .product-card-container {
+            margin-top: 80px;
+            transition: all 0.5s ease;
+        }
+        
+        .product-circle {
+            width: 180px; height: 180px;
+            background: white;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            position: absolute; top: -90px; left: 50%; transform: translateX(-50%);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            z-index: 20; border: 6px solid white;
+        }
+
+        .product-circle img {
+            width: 90%; height: 90%;
+            object-fit: cover; border-radius: 50%;
+        }
+
+        .price-badge-mini {
+            position: absolute; top: 20px; right: 20px;
+            background: white; padding: 8px 15px;
+            border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 30; border: 2px dashed #eee;
+        }
+
+        .bg-char-menu {
+            position: fixed;
+            bottom: -100px; 
+            left: -300px;
+            width: 1000px; 
+            opacity: 0.1; 
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @media (max-width: 768px) {
+            .bg-char-menu { width: 500px; left: -150px; opacity: 0.05; }
+            body { padding-bottom: 70px; }
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <nav class="flex justify-between items-center px-6 md:px-10 py-6 max-w-7xl mx-auto relative z-50">
+        <div class="flex items-center">
+            <a href="index.html" class="transition-transform hover:scale-105">
+                <img src="logo.png" alt="Happy Drops" class="h-16 md:h-20 w-auto object-contain">
+            </a>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="hidden md:flex items-center gap-3 border border-gray-200 bg-white/80 px-5 py-2 rounded-full shadow-sm">
+                <span class="text-[12px] font-bold text-[#3D2B1F]">CALL: +94 71 612 4040</span>
+            </div>
+            <a href="index.html" class="text-[#4A3228] font-bold text-sm uppercase tracking-widest hover:text-[#E0A142] transition-colors">Home</a>
+            <button class="bg-[#E0A142] text-white px-8 py-2.5 rounded-full font-bold uppercase text-sm shadow-lg hover:bg-[#c98e35] transition-all">Login</button>
+        </div>
+    </nav>
+
+    <header class="text-center py-16 px-6 relative z-10">
+        <span class="text-[#859431] font-bold uppercase tracking-[0.4em] text-xs mb-4 block">Premium Selection</span>
+        <h1 class="text-[#4A3228] text-5xl md:text-7xl font-black font-montserrat uppercase tracking-tighter">
+            Our <span class="text-[#E0A142]">Menu</span>
+        </h1>
+    </header>
+
+    <section class="max-w-7xl mx-auto px-6 pb-40 relative z-10">
+        <div id="menu-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-32">
+            <div class="col-span-full text-center py-20">
+                <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-[#4A3228] mx-auto mb-4"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="relative w-full bg-[#4A3228] pb-16 pt-32 px-10 overflow-hidden">
+        <div class="absolute top-0 left-0 w-full overflow-hidden leading-[0] z-0">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="relative block w-[100%] h-[80px] md:h-[120px]" style="margin-top: -1px;">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5,103.87-6.14,208,27.32,312.7,35,101.4,7.4,204.6-22.1,302.2-46.3c35.6-8.8,70.2-18,120.3-15.5V0H0Z" fill="#F9FAFB"></path>
+            </svg>
+        </div>
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10 relative z-10">
+            <div class="flex-1 text-center md:text-left">
+                <div class="inline-block bg-[#E0A142]/20 px-4 py-1 rounded-full mb-4">
+                    <span class="text-[#E0A142] text-xs font-black uppercase tracking-widest">Newsletter</span>
+                </div>
+                <h3 class="text-white text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none mb-4">
+                    Join the <span class="text-[#E0A142]">Flavor</span> Club
+                </h3>
+                <p class="text-gray-400 text-lg">Subscribe to get exclusive biryani deals & spicy updates.</p>
+            </div>
+            <div class="w-full md:w-auto">
+                <form class="flex flex-col sm:flex-row gap-3">
+                    <input type="email" placeholder="Enter your email" class="bg-white/10 border-2 border-white/10 text-white px-8 py-5 rounded-2xl focus:outline-none focus:border-[#E0A142] w-full sm:w-96 transition-all placeholder:text-gray-500 font-medium">
+                    <button class="bg-[#E0A142] text-white px-10 py-5 rounded-2xl font-black uppercase text-sm tracking-[0.2em] hover:bg-white hover:text-[#4A3228] transition-all">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer class="hidden md:block bg-[#3D2B1F] text-white pt-24 pb-8 px-10 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-16 pb-20">
+                <div class="md:col-span-4 space-y-8">
+                    <div>
+                        <h2 class="font-montserrat font-black text-4xl tracking-tighter leading-none mb-2">
+                            HAPPY<span class="text-[#E0A142]">DROPS.</span>
+                        </h2>
+                        <p class="text-[#859431] font-bold text-xs uppercase tracking-[0.4em]">Premium Biryani UI</p>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed max-w-sm">
+                        Crafting extraordinary culinary experiences with the finest spices and traditional secrets.
+                    </p>
+                </div>
+                <div class="md:col-span-2 space-y-8">
+                    <h4 class="text-white font-bold text-sm uppercase tracking-widest">Explore</h4>
+                    <ul class="space-y-4">
+                        <li><a href="index.html" class="text-gray-500 hover:text-[#E0A142] text-sm transition-colors">Home</a></li>
+                        <li><a href="menu.html" class="text-gray-500 hover:text-[#E0A142] text-sm transition-colors">Menu</a></li>
+                    </ul>
+                </div>
+                <div class="md:col-span-3 space-y-8">
+                    <h4 class="text-white font-bold text-sm uppercase tracking-widest">Contact</h4>
+                    <div class="space-y-4">
+                        <p class="text-gray-500 text-sm">No 123, Biryani Avenue, Colombo 07</p>
+                        <p class="text-[#E0A142] font-black text-lg">+94 71 612 4040</p>
+                    </div>
+                </div>
+                <div class="md:col-span-3 bg-white/5 p-8 rounded-[30px] border border-white/5">
+                    <h4 class="text-white font-bold text-sm uppercase tracking-widest mb-6">Service Hours</h4>
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-xs text-gray-400"><span>WEEKDAYS</span><span>10:00 - 22:00</span></div>
+                        <div class="flex justify-between text-xs text-gray-400"><span>WEEKENDS</span><span class="text-[#E0A142] font-bold">09:00 - 23:00</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-10 border-t border-white/5 flex justify-between items-center">
+                <p class="text-gray-600 text-[10px] font-bold uppercase tracking-[0.3em]">© 2026 HAPPY DROPS PREMIUM. ALL RIGHTS RESERVED.</p>
+            </div>
+        </div>
+    </footer>
+<div class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-100 flex justify-around items-center py-3 z-[100] md:hidden shadow-[0_-8px_30px_rgba(0,0,0,0.08)]">
+    
+    <a href="index.html" class="flex flex-col items-center gap-1 group transition-all">
+        <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center group-hover:bg-[#E0A142] group-active:scale-90 transition-all">
+            <svg class="w-5 h-5 text-[#E0A142] group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+        </div>
+        <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 group-hover:text-[#4A3228]">Home</span>
+    </a>
+
+    <a href="menu.html" class="flex flex-col items-center gap-1 group transition-all">
+        <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center group-hover:bg-[#859431] group-active:scale-90 transition-all">
+            <svg class="w-5 h-5 text-[#859431] group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+            </svg>
+        </div>
+        <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 group-hover:text-[#4A3228]">Menu</span>
+    </a>
+
+    <a href="contact.html" class="flex flex-col items-center gap-1 group transition-all">
+        <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center group-hover:bg-[#E0A142] group-active:scale-90 transition-all">
+            <svg class="w-5 h-5 text-[#E0A142] group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+            </svg>
+        </div>
+        <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 group-hover:text-[#4A3228]">Contact</span>
+    </a>
+
+    <a href="about.html" class="flex flex-col items-center gap-1 group transition-all">
+        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center group-hover:bg-[#4A3228] group-active:scale-90 transition-all">
+            <svg class="w-5 h-5 text-[#4A3228] group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+        </div>
+        <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 group-hover:text-[#4A3228]">About</span>
+    </a>
+
+</div>
+
+    <div id="order-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-[40px] overflow-hidden shadow-2xl">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-black text-[#4A3228] uppercase">Complete Your Order</h3>
+                    <button onclick="closeModal()" class="text-gray-400 hover:text-black text-2xl">✕</button>
+                </div>
+                <form id="order-confirm-form" class="space-y-4">
+                    <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-2xl mb-4">
+                        <img id="modal-img" src="" class="w-16 h-16 object-cover rounded-xl shadow-md">
+                        <div>
+                            <h4 id="modal-title" class="font-black text-[#4A3228]">Product Name</h4>
+                            <p id="modal-price" class="text-sm font-bold text-[#E0A142]">₹0.00</p>
+                        </div>
+                    </div>
+                    <div class="flex p-1 bg-gray-100 rounded-2xl">
+                        <button type="button" id="retail-btn" onclick="setOrderType('retail')" class="flex-1 py-3 rounded-xl font-bold text-sm transition-all bg-white shadow-sm text-[#4A3228]">Retail</button>
+                        <button type="button" id="wholesale-btn" onclick="setOrderType('wholesale')" class="flex-1 py-3 rounded-xl font-bold text-sm transition-all text-gray-500">Wholesale</button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="text" id="cust-name" placeholder="Full Name" class="w-full p-4 border rounded-2xl outline-none focus:ring-2 focus:ring-[#E0A142]" required>
+                        <input type="tel" id="cust-phone" placeholder="Phone Number" class="w-full p-4 border rounded-2xl outline-none focus:ring-2 focus:ring-[#E0A142]" required>
+                    </div>
+                    <textarea id="cust-address" placeholder="Delivery Address" rows="2" class="w-full p-4 border rounded-2xl outline-none focus:ring-2 focus:ring-[#E0A142]" required></textarea>
+                    <div class="flex items-center justify-between bg-gray-50 p-4 rounded-2xl">
+                        <span class="font-bold text-[#4A3228]">Quantity:</span>
+                        <input type="number" id="order-qty" value="1" min="1" class="w-20 p-2 text-center font-black bg-transparent border-b-2 border-[#4A3228] outline-none">
+                    </div>
+                    <p id="qty-warning" class="text-[10px] text-red-500 font-bold hidden text-center uppercase tracking-widest">* Wholesale orders must be 10 or more</p>
+                    <button type="submit" class="w-full bg-[#4A3228] text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl hover:bg-black transition-all">Confirm Order</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <img src="https://i.ibb.co/LdByHmdv/Every-Drop-Make-happy-3.png" class="bg-char-menu" alt="chef character">
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXoEgWEZM36nzBO0YmCVehTksNHzd3rT8",
+            authDomain: "happy-drops-9bba9.firebaseapp.com",
+            projectId: "happy-drops-9bba9",
+            storageBucket: "happy-drops-9bba9.firebasestorage.app",
+            messagingSenderId: "337314308860",
+            appId: "1:337314308860:web:05f148a54b5678dac2ad79"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const menuContainer = document.getElementById('menu-container');
+        let currentType = 'retail';
+
+        // Load Products and Render Cards
+        db.collection("products").onSnapshot((snapshot) => {
+            menuContainer.innerHTML = ""; 
+            snapshot.forEach((doc) => {
+                const p = doc.data();
+                menuContainer.innerHTML += `
+                    <div class="product-card-container relative group">
+                        <div class="product-circle shadow-2xl transition-transform duration-500 group-hover:scale-110">
+                            <img src="${p.image}" alt="${p.title2}">
+                        </div>
+                        <div class="rounded-[50px] p-8 pt-28 text-center shadow-xl relative" style="background-color: ${p.bgColor || '#4A3228'}">
+                            <div class="price-badge-mini">
+                                <div class="text-sm font-black text-[#4A3228]">₹${p.price}</div>
+                            </div>
+                            <div class="text-white">
+                                <p class="script-font text-2xl mb-1">${p.title1}</p>
+                                <h4 class="text-3xl font-black mb-4 uppercase font-montserrat">${p.title2}</h4>
+                                <p class="text-xs opacity-80 mb-8 line-clamp-3">${p.description || ''}</p>
+                                <button onclick="openOrderModal('${p.title2}', '${p.price}', '${p.image}')" class="bg-white text-[#4A3228] px-10 py-4 rounded-2xl text-xs font-black uppercase hover:bg-[#E0A142] hover:text-white transition-all">Order Now</button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        });
+
+        // Modal Logic
+        function openOrderModal(title, price, img) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-price').innerText = '₹' + price;
+            document.getElementById('modal-img').src = img;
+            document.getElementById('order-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('order-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function setOrderType(type) {
+            currentType = type;
+            const retailBtn = document.getElementById('retail-btn');
+            const wholesaleBtn = document.getElementById('wholesale-btn');
+            const qtyInput = document.getElementById('order-qty');
+            const warning = document.getElementById('qty-warning');
+
+            if (type === 'wholesale') {
+                wholesaleBtn.classList.add('bg-white', 'shadow-sm', 'text-[#4A3228]');
+                retailBtn.classList.remove('bg-white', 'shadow-sm', 'text-[#4A3228]');
+                qtyInput.value = 10; qtyInput.min = 10;
+                warning.classList.remove('hidden');
+            } else {
+                retailBtn.classList.add('bg-white', 'shadow-sm', 'text-[#4A3228]');
+                wholesaleBtn.classList.remove('bg-white', 'shadow-sm', 'text-[#4A3228]');
+                qtyInput.value = 1; qtyInput.min = 1;
+                warning.classList.add('hidden');
+            }
+        }
+
+        // Form Submission Logic
+        document.getElementById('order-confirm-form').onsubmit = async function(e) {
+            e.preventDefault();
+            const qty = document.getElementById('order-qty').value;
+            if (currentType === 'wholesale' && qty < 10) {
+                alert("Wholesale orders must be at least 10 units!");
+                return;
+            }
+            try {
+                await db.collection("orders").add({
+                    customerName: document.getElementById('cust-name').value,
+                    phoneNumber: document.getElementById('cust-phone').value,
+                    address: document.getElementById('cust-address').value,
+                    productName: document.getElementById('modal-title').innerText,
+                    orderType: currentType,
+                    quantity: parseInt(qty),
+                    status: "Pending",
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                alert("Order Placed Successfully!");
+                closeModal();
+                document.getElementById('order-confirm-form').reset();
+            } catch (error) {
+                alert("Something went wrong. Please try again.");
+            }
+        };
+    </script>
+</body>
+</html>

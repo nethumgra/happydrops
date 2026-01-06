@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Manager - Happy Drops Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .script-font { font-family: 'Dancing Script', cursive; }
+        .mont-font { font-family: 'Montserrat', sans-serif; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #4A3228; border-radius: 10px; }
+
+        .active-tab { 
+            background-color: #E0A142; 
+            color: white; 
+            box-shadow: 0 10px 20px -5px rgba(224, 161, 66, 0.4); 
+        }
+
+        /* Preview Card Styles - Matches menu.html */
+        .preview-card-wrap {
+            background: #fff;
+            border-radius: 40px;
+            border: 2px solid #4A3228;
+            position: relative;
+            padding-left: 120px;
+            padding-right: 20px;
+            padding-top: 30px;
+            padding-bottom: 30px;
+        }
+        .preview-img-box {
+            position: absolute;
+            left: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #4A3228;
+            overflow: hidden;
+        }
+        .preview-price {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: #4A3228;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 900;
+            border: 2px solid #fff;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row">
+
+    <aside class="w-full md:w-72 bg-[#4A3228] text-white flex flex-col shadow-2xl">
+        <div class="p-10 text-center border-b border-white/5">
+            <h1 class="text-xl font-black tracking-widest uppercase">Happy Drops</h1>
+            <div class="text-[9px] bg-[#E0A142] py-1 px-3 rounded-full inline-block mt-2 font-black">MENU MANAGER V3.0</div>
+        </div>
+        <nav class="flex-1 px-6 py-8 space-y-3">
+            <a href="admin.html" class="w-full flex items-center gap-4 p-4 rounded-2xl font-bold text-white/60 hover:text-white hover:bg-white/5 transition-all">
+                Main Dashboard
+            </a>
+            <button class="active-tab w-full flex items-center gap-4 p-4 rounded-2xl font-bold transition-all">
+                Manage Menu Items
+            </button>
+        </nav>
+    </aside>
+
+    <main class="flex-1 p-4 md:p-12 overflow-y-auto">
+        <div class="grid lg:grid-cols-12 gap-10">
+            
+            <div class="lg:col-span-5">
+                <div class="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100">
+                    <h2 id="form-title" class="text-xl font-black mb-6 text-[#4A3228] uppercase border-b pb-4">Add Menu Item</h2>
+                    
+                    <form id="menu-form" class="space-y-4">
+                        <input type="hidden" id="item-id">
+                        <input type="hidden" id="productImgUrl">
+                        <input type="hidden" id="characterImgUrl">
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <input type="text" id="title" placeholder="Main Title (e.g. Biscuit Pudding)" class="w-full p-3 bg-gray-50 border rounded-xl text-sm font-bold" required>
+                            <input type="number" id="price" placeholder="Price (RS)" class="w-full p-3 bg-gray-50 border rounded-xl text-sm font-bold" required>
+                        </div>
+
+                        <textarea id="description" rows="2" placeholder="Short Description..." class="w-full p-3 bg-gray-50 border rounded-xl text-sm outline-none"></textarea>
+
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-gray-400 uppercase ml-1">Detail Bubbles Content</label>
+                            <input type="text" id="det1" placeholder="Detail 1 (Creamy Layers)" class="w-full p-3 bg-gray-50 border rounded-xl text-xs">
+                            <input type="text" id="det2" placeholder="Detail 2 (Chocolate Flavor)" class="w-full p-3 bg-gray-50 border rounded-xl text-xs">
+                            <input type="text" id="det3" placeholder="Detail 3 (Perfect for Party)" class="w-full p-3 bg-gray-50 border rounded-xl text-xs">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-orange-50 p-4 rounded-2xl border-2 border-dashed border-orange-100">
+                                <label class="text-[9px] font-black text-orange-400 uppercase block mb-1">Product Image</label>
+                                <input type="file" id="prodInp" class="text-[9px] w-full" accept="image/*">
+                            </div>
+                            <div class="bg-blue-50 p-4 rounded-2xl border-2 border-dashed border-blue-100">
+                                <label class="text-[9px] font-black text-blue-400 uppercase block mb-1">Character Image</label>
+                                <input type="file" id="charInp" class="text-[9px] w-full" accept="image/*">
+                            </div>
+                        </div>
+                        <p id="upload-status" class="text-[10px] font-bold text-center"></p>
+
+                        <button type="submit" id="submit-btn" class="w-full bg-[#E0A142] text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-lg disabled:opacity-50" disabled>Upload Images First</button>
+                        <button type="button" id="cancel-btn" onclick="resetForm()" class="hidden w-full text-gray-400 font-bold uppercase text-[10px] pt-2">Cancel Edit</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="lg:col-span-7 space-y-10">
+                <div class="bg-gray-100 p-10 rounded-[40px] border border-dashed border-gray-300">
+                    <p class="text-[10px] font-black text-gray-400 uppercase mb-10 text-center tracking-[0.5em]">Live Menu Preview</p>
+                    <div id="live-preview" class="mont-font">
+                        </div>
+                </div>
+
+                <div class="bg-white rounded-[40px] shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-6 border-b font-black text-[#4A3228] uppercase text-xs">Current Menu</div>
+                    <div class="max-h-[400px] overflow-y-auto divide-y" id="menu-list"></div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // --- 1. CONFIGURATION ---
+        const firebaseConfig = { 
+            apiKey: "AIzaSyAXoEgWEZM36nzBO0YmCVehTksNHzd3rT8", 
+            authDomain: "happy-drops-9bba9.firebaseapp.com", 
+            projectId: "happy-drops-9bba9", 
+            storageBucket: "happy-drops-9bba9.firebasestorage.app", 
+            messagingSenderId: "337314308860", 
+            appId: "1:337314308860:web:05f148a54b5678dac2ad79" 
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const IMGBB_API_KEY = "7570dd50a07cac8d3be44e477a63c201";
+
+        let prodUploaded = false;
+        let charUploaded = false;
+
+        // --- 2. IMAGE UPLOAD LOGIC ---
+        async function uploadToImgBB(file) {
+            const formData = new FormData();
+            formData.append("image", file);
+            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
+            const data = await res.json();
+            return data.success ? data.data.url : null;
+        }
+
+        document.getElementById('prodInp').addEventListener('change', async (e) => {
+            const url = await uploadToImgBB(e.target.files[0]);
+            if(url) {
+                document.getElementById('productImgUrl').value = url;
+                prodUploaded = true;
+                checkReady();
+            }
+        });
+
+        document.getElementById('charInp').addEventListener('change', async (e) => {
+            const url = await uploadToImgBB(e.target.files[0]);
+            if(url) {
+                document.getElementById('characterImgUrl').value = url;
+                charUploaded = true;
+                checkReady();
+            }
+        });
+
+        function checkReady() {
+            const btn = document.getElementById('submit-btn');
+            const status = document.getElementById('upload-status');
+            if(prodUploaded && charUploaded) {
+                btn.disabled = false;
+                btn.innerText = "Save Menu Item";
+                status.innerText = "✅ All Assets Ready";
+                status.className = "text-[10px] font-bold text-center text-green-500";
+                updatePreview();
+            } else {
+                status.innerText = "⏳ Uploading assets...";
+                status.className = "text-[10px] font-bold text-center text-orange-500";
+            }
+        }
+
+        // --- 3. PREVIEW ENGINE ---
+        function updatePreview() {
+            const title = document.getElementById('title').value || 'Biscuit Pudding';
+            const price = document.getElementById('price').value || '0';
+            const desc = document.getElementById('description').value || 'Short description here...';
+            const pImg = document.getElementById('productImgUrl').value || 'https://via.placeholder.com/150';
+            
+            document.getElementById('live-preview').innerHTML = `
+                <div class="preview-card-wrap">
+                    <div class="preview-img-box"><img src="${pImg}" class="w-full h-full object-cover"></div>
+                    <div class="preview-price"><span>RS.</span><span class="text-lg">${price}</span></div>
+                    <h3 class="text-xl font-black text-[#4A3228] uppercase">${title}</h3>
+                    <p class="text-[10px] text-gray-400 font-bold leading-tight">${desc}</p>
+                </div>
+            `;
+        }
+        ['title', 'price', 'description'].forEach(id => document.getElementById(id).addEventListener('input', updatePreview));
+
+        // --- 4. CRUD OPERATIONS ---
+        const form = document.getElementById('menu-form');
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('item-id').value;
+            const data = {
+                title: document.getElementById('title').value,
+                price: document.getElementById('price').value,
+                description: document.getElementById('description').value,
+                detail1: document.getElementById('det1').value,
+                detail2: document.getElementById('det2').value,
+                detail3: document.getElementById('det3').value,
+                productImageLink: document.getElementById('productImgUrl').value,
+                characterImageLink: document.getElementById('characterImgUrl').value,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            if(id) {
+                await db.collection("menu_items").doc(id).update(data);
+            } else {
+                await db.collection("menu_items").add(data);
+            }
+            alert("Menu Updated!");
+            resetForm();
+        };
+
+        // Real-time List
+        db.collection("menu_items").onSnapshot(snap => {
+            const list = document.getElementById('menu-list');
+            list.innerHTML = "";
+            snap.forEach(doc => {
+                const item = doc.data();
+                list.innerHTML += `
+                    <div class="p-4 flex justify-between items-center bg-white hover:bg-gray-50">
+                        <div class="flex items-center gap-3">
+                            <img src="${item.productImageLink}" class="w-10 h-10 rounded-full border">
+                            <span class="text-xs font-black text-[#4A3228]">${item.title}</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editItem('${doc.id}')" class="text-blue-500 font-bold text-[10px] uppercase">Edit</button>
+                            <button onclick="deleteItem('${doc.id}')" class="text-red-300 font-bold text-[10px] uppercase">X</button>
+                        </div>
+                    </div>
+                `;
+            });
+        });
+
+        window.editItem = async (id) => {
+            const doc = await db.collection("menu_items").doc(id).get();
+            const d = doc.data();
+            document.getElementById('item-id').value = id;
+            document.getElementById('title').value = d.title;
+            document.getElementById('price').value = d.price;
+            document.getElementById('description').value = d.description;
+            document.getElementById('det1').value = d.detail1;
+            document.getElementById('det2').value = d.detail2;
+            document.getElementById('det3').value = d.detail3;
+            document.getElementById('productImgUrl').value = d.productImageLink;
+            document.getElementById('characterImgUrl').value = d.characterImageLink;
+            
+            prodUploaded = true; charUploaded = true;
+            checkReady();
+            document.getElementById('cancel-btn').classList.remove('hidden');
+            document.getElementById('form-title').innerText = "Edit Menu Item";
+            updatePreview();
+        };
+
+        window.deleteItem = (id) => confirm("Delete this item?") && db.collection("menu_items").doc(id).delete();
+
+        function resetForm() {
+            form.reset();
+            document.getElementById('item-id').value = "";
+            document.getElementById('productImgUrl').value = "";
+            document.getElementById('characterImgUrl').value = "";
+            prodUploaded = false; charUploaded = false;
+            document.getElementById('submit-btn').disabled = true;
+            document.getElementById('submit-btn').innerText = "Upload Images First";
+            document.getElementById('cancel-btn').classList.add('hidden');
+            document.getElementById('form-title').innerText = "Add Menu Item";
+            updatePreview();
+        }
+    </script>
+</body>
+</html>

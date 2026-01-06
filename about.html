@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Happy Drops Premium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Montserrat:wght@900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f9fafb; margin: 0; padding: 0; }
+        .font-montserrat { font-family: 'Montserrat', sans-serif; }
+        .script-font { font-family: 'Dancing Script', cursive; }
+
+        /* Background Character - Clean set */
+        .bg-char-about {
+            position: fixed;
+            bottom: -50px; 
+            left: -200px;
+            width: 800px; 
+            opacity: 0.1; 
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @media (max-width: 768px) {
+            body { padding-bottom: 70px; }
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <nav class="flex justify-between items-center px-6 md:px-10 py-6 max-w-7xl mx-auto relative z-50">
+        <div class="flex items-center">
+            <a href="index.html" class="transition-transform hover:scale-105">
+                <img src="logo.png" alt="Happy Drops" class="h-16 md:h-20 w-auto object-contain">
+            </a>
+        </div>
+        <div class="flex items-center gap-6">
+            <a href="index.html" class="hidden md:block text-[#4A3228] font-bold text-sm uppercase tracking-widest hover:text-[#E0A142] transition-colors">Home</a>
+            <a href="menu.html" class="hidden md:block text-[#4A3228] font-bold text-sm uppercase tracking-widest hover:text-[#E0A142] transition-colors">Menu</a>
+            <button class="bg-[#E0A142] text-white px-8 py-2.5 rounded-full font-bold uppercase text-sm shadow-lg hover:bg-[#c98e35] transition-all">Login</button>
+        </div>
+    </nav>
+
+    <header class="text-center py-16 px-6 relative z-10">
+        <span class="text-[#859431] font-bold uppercase tracking-[0.4em] text-xs mb-4 block">Our Journey</span>
+        <h1 class="text-[#4A3228] text-5xl md:text-7xl font-black font-montserrat uppercase tracking-tighter">
+            About <span class="text-[#E0A142]">Us</span>
+        </h1>
+    </header>
+
+    <section class="max-w-7xl mx-auto px-6 pb-40 relative z-10">
+        <div class="grid lg:grid-cols-2 gap-20 items-center">
+            
+            <div class="w-full">
+                <img src="https://i.ibb.co/Mk8Ms1KZ/Untitled-design-2026-01-06-T135301-770.png" alt="Our Kitchen" class="w-full h-auto block">
+            </div>
+
+            <div class="space-y-8">
+                <div>
+                    <span class="text-[#859431] font-extrabold uppercase tracking-widest text-sm mb-2 block">Since 2020</span>
+                    <h2 class="text-[#4A3228] text-4xl md:text-5xl font-black leading-tight">Authentic Taste <br><span class="text-[#E0A142]">In Every Drop.</span></h2>
+                </div>
+
+                <p class="text-gray-500 text-lg leading-relaxed">
+                    At Happy Drops, we believe that food is more than just sustenance; it's a celebration of culture and flavor. Our journey started with a simple passion: to bring the most aromatic and authentic spices to your table through our signature dishes.
+                </p>
+
+                <div class="grid sm:grid-cols-2 gap-6 pt-4">
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-[#4A3228] text-xl">Fresh Ingredients</h4>
+                        <p class="text-sm text-gray-400">Pure and organic farm produce directly from the source.</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-[#4A3228] text-xl">Traditional Way</h4>
+                        <p class="text-sm text-gray-400">Cooking with ancient secrets and aromatic spices.</p>
+                    </div>
+                </div>
+
+                <div class="pt-6">
+                    <a href="menu.html" class="inline-block bg-[#4A3228] text-white px-12 py-5 rounded-full font-black uppercase tracking-widest shadow-xl hover:bg-[#E0A142] transition-all transform hover:-translate-y-1">
+                        Explore Our Menu
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="relative w-full bg-[#4A3228] pb-16 pt-32 px-10 overflow-hidden">
+        <div class="absolute top-0 left-[-0.5%] w-[101%] overflow-hidden leading-[0] z-0">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="relative block w-full h-[80px] md:h-[120px]" style="margin-top: -1px;">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5,103.87-6.14,208,27.32,312.7,35,101.4,7.4,204.6-22.1,302.2-46.3c35.6-8.8,70.2-18,120.3-15.5V0H0Z" fill="#F9FAFB"></path>
+            </svg>
+        </div>
+
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10 relative z-10">
+            <div class="flex-1 text-center md:text-left">
+                <div class="inline-block bg-[#E0A142]/20 px-4 py-1 rounded-full mb-4">
+                    <span class="text-[#E0A142] text-xs font-black uppercase tracking-widest">Newsletter</span>
+                </div>
+                <h3 class="text-white text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none mb-4">
+                    Join the <span class="text-[#E0A142]">Flavor</span> Club
+                </h3>
+                <p class="text-gray-400 text-lg">Subscribe to get exclusive biryani deals & spicy updates.</p>
+            </div>
+            <div class="w-full md:w-auto">
+                <form class="flex flex-col sm:flex-row gap-3">
+                    <input type="email" placeholder="Enter your email" class="bg-white/10 border-2 border-white/10 text-white px-8 py-5 rounded-2xl focus:outline-none focus:border-[#E0A142] w-full sm:w-96 transition-all placeholder:text-gray-500 font-medium">
+                    <button class="bg-[#E0A142] text-white px-10 py-5 rounded-2xl font-black uppercase text-sm tracking-[0.2em] hover:bg-white hover:text-[#4A3228] transition-all">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer class="hidden md:block bg-[#3D2B1F] text-white pt-24 pb-8 px-10 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-16 pb-20">
+                <div class="md:col-span-4 space-y-8">
+                    <div>
+                        <h2 class="font-montserrat font-black text-4xl tracking-tighter leading-none mb-2">HAPPY<span class="text-[#E0A142]">DROPS.</span></h2>
+                        <p class="text-[#859431] font-bold text-xs uppercase tracking-[0.4em]">Premium Biryani UI</p>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed max-w-sm">Crafting extraordinary culinary experiences with traditional secrets.</p>
+                </div>
+                <div class="md:col-span-2 space-y-8">
+                    <h4 class="text-white font-bold text-sm uppercase tracking-widest">Explore</h4>
+                    <ul class="space-y-4">
+                        <li><a href="index.html" class="text-gray-500 hover:text-[#E0A142] text-sm">Home</a></li>
+                        <li><a href="menu.html" class="text-gray-500 hover:text-[#E0A142] text-sm">Menu</a></li>
+                    </ul>
+                </div>
+                <div class="md:col-span-3 space-y-8">
+                    <h4 class="text-white font-bold text-sm uppercase tracking-widest">Contact</h4>
+                    <p class="text-gray-500 text-sm">No 123, Biryani Avenue, Colombo 07</p>
+                    <p class="text-[#E0A142] font-black text-lg">+94 71 612 4040</p>
+                </div>
+                <div class="md:col-span-3 bg-white/5 p-8 rounded-[30px] border border-white/5">
+                    <h4 class="text-white font-bold text-sm uppercase tracking-widest mb-4">Service Hours</h4>
+                    <div class="flex justify-between text-xs text-gray-400"><span>Weekdays</span><span>10am - 10pm</span></div>
+                    <div class="flex justify-between text-xs text-[#E0A142] font-black"><span>Weekends</span><span>9am - 11pm</span></div>
+                </div>
+            </div>
+            <p class="text-center text-gray-600 text-[10px] font-bold uppercase tracking-[0.3em] pt-10 border-t border-white/5">© 2026 HAPPY DROPS PREMIUM. ALL RIGHTS RESERVED.</p>
+        </div>
+    </footer>
+
+    <div class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-100 flex justify-around items-center py-3 z-[100] md:hidden shadow-[0_-8px_30px_rgba(0,0,0,0.08)]">
+    
+    <a href="index.html" class="flex flex-col items-center gap-1 group transition-all">
+        <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center group-hover:bg-[#E0A142] group-active:scale-90 transition-all">
+            <svg class="w-5 h-5 text-[#E0A142] group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+        </div>
+        <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 group-hover:text-[#4A3228]">Home</span>
+    </a>
+
+    <a href="menu.html" class="flex flex-col items-center gap-1 group transition-all">
+        <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center group-hover:bg-[#859431] group-active:scale-90 transition-all">
+            <svg class="w-5 h-5 text-[#859431] group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+            </svg>
+        </div>
+        <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 group-hover:text-[#4A3228]">Menu</span>
+    </a>
+
+    <a href="contact.html" class="flex flex-col items-center gap-1 group transition-all">
+        <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center group-hover:bg-[#E0A142] group-active:scale-90 transition-all">
+            <svg class="w-5 h-5 text-[#E0A142] group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+            </svg>
+        </div>
+        <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 group-hover:text-[#4A3228]">Contact</span>
+    </a>
+
+    <a href="about.html" class="flex flex-col items-center gap-1 group transition-all">
+        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center group-hover:bg-[#4A3228] group-active:scale-90 transition-all">
+            <svg class="w-5 h-5 text-[#4A3228] group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+        </div>
+        <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 group-hover:text-[#4A3228]">About</span>
+    </a>
+
+</div>
+
+</body>
+</html>
