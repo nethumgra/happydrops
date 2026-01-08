@@ -8,6 +8,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@900&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
 
@@ -22,8 +27,7 @@
     }
 </style>
 
-<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
 
     <style>
         body { font-family: 'Poppins', sans-serif; }
@@ -119,7 +123,7 @@
                     CALL: +94 71 612 4040
                 </div>
             </div>
-            <button class="bg-[#E0A142] text-white px-8 py-2 rounded-full text-sm font-bold shadow-md hover:bg-[#c98e35] transition-colors uppercase">LOGIN</button>
+           <button id="main-login-btn" onclick="openAuthModal()" class="bg-[#E0A142] text-white px-8 py-2 rounded-full text-sm font-bold shadow-md hover:bg-[#c98e35] transition-colors uppercase">LOGIN</button>
             
             <button id="open-drawer" class="text-3xl text-gray-700 hover:text-[#E0A142] transition-colors focus:outline-none">☰</button>
         </div>
@@ -1027,5 +1031,110 @@ document.getElementById('order-confirm-form').onsubmit = async function(e) {
         body { padding-bottom: 80px; }
     }
 </style>
+
+<div id="auth-modal" class="fixed inset-0 bg-[#4A3228]/60 backdrop-blur-sm z-[110] hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-[40px] overflow-hidden shadow-2xl relative p-10">
+        <button onclick="closeAuthModal()" class="absolute top-6 right-8 text-3xl text-gray-400 hover:text-gray-600">&times;</button>
+        
+        <div id="login-view">
+            <div class="text-center mb-8">
+                <h3 class="text-[#4A3228] text-3xl font-black uppercase tracking-tighter">Login</h3>
+                <p class="text-gray-400 text-sm">Welcome back to Happy Drops!</p>
+            </div>
+            <form id="login-form" class="space-y-4">
+                <input type="email" id="login-email" placeholder="Email Address" class="w-full bg-gray-50 border-none p-4 rounded-2xl outline-none focus:ring-2 focus:ring-[#E0A142]" required>
+                <input type="password" id="login-password" placeholder="Password" class="w-full bg-gray-50 border-none p-4 rounded-2xl outline-none focus:ring-2 focus:ring-[#E0A142]" required>
+                <button type="submit" class="w-full bg-[#E0A142] text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-[#4A3228] transition-all">Login Now</button>
+            </form>
+            <p class="mt-6 text-center text-sm text-gray-500">Don't have an account? <a href="javascript:void(0)" onclick="toggleAuthMode('signup')" class="text-[#E0A142] font-bold">Sign Up</a></p>
+        </div>
+
+        <div id="signup-view" class="hidden">
+            <div class="text-center mb-8">
+                <h3 class="text-[#4A3228] text-3xl font-black uppercase tracking-tighter">Sign <span class="text-[#E0A142]">Up</span></h3>
+                <p class="text-gray-400 text-sm">Create your premium account</p>
+            </div>
+            <form id="signup-form" class="space-y-4">
+                <input type="text" id="signup-name" placeholder="Full Name" class="w-full bg-gray-50 border-none p-4 rounded-2xl outline-none focus:ring-2 focus:ring-[#E0A142]" required>
+                <input type="email" id="signup-email" placeholder="Email Address" class="w-full bg-gray-50 border-none p-4 rounded-2xl outline-none focus:ring-2 focus:ring-[#E0A142]" required>
+                <input type="password" id="signup-password" placeholder="Create Password" class="w-full bg-gray-50 border-none p-4 rounded-2xl outline-none focus:ring-2 focus:ring-[#E0A142]" required>
+                <button type="submit" class="w-full bg-[#4A3228] text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-[#E0A142] transition-all">Create Account</button>
+            </form>
+            <p class="mt-6 text-center text-sm text-gray-500">Already have an account? <a href="javascript:void(0)" onclick="toggleAuthMode('login')" class="text-[#E0A142] font-bold">Login</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Auth Modal Functions
+function openAuthModal() {
+    document.getElementById('auth-modal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeAuthModal() {
+    document.getElementById('auth-modal').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+function toggleAuthMode(mode) {
+    if (mode === 'signup') {
+        document.getElementById('login-view').classList.add('hidden');
+        document.getElementById('signup-view').classList.remove('hidden');
+    } else {
+        document.getElementById('signup-view').classList.add('hidden');
+        document.getElementById('login-view').classList.remove('hidden');
+    }
+}
+
+// 1. Sign Up Logic
+document.getElementById('signup-form').onsubmit = async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('signup-email').value;
+    const pass = document.getElementById('signup-password').value;
+    const name = document.getElementById('signup-name').value;
+
+    try {
+        const result = await firebase.auth().createUserWithEmailAndPassword(email, pass);
+        await result.user.updateProfile({ displayName: name });
+        alert("Account Created Successfully, " + name + "!");
+        closeAuthModal();
+    } catch (error) {
+        alert("Error: " + error.message);
+    }
+};
+
+// 2. Login Logic
+document.getElementById('login-form').onsubmit = async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value;
+    const pass = document.getElementById('login-password').value;
+
+    try {
+        await firebase.auth().signInWithEmailAndPassword(email, pass);
+        alert("Login Successful!");
+        closeAuthModal();
+    } catch (error) {
+        alert("Login Error: " + error.message);
+    }
+};
+
+// 3. Monitor Auth State (Login ද Logout ද කියලා බලනවා)
+firebase.auth().onAuthStateChanged((user) => {
+    const loginBtn = document.getElementById('main-login-btn');
+    if (user) {
+        // User ලොග් වෙලා ඉන්නවා නම් බටන් එක Logout වෙනවා
+        loginBtn.innerText = "LOGOUT";
+        loginBtn.onclick = () => {
+            firebase.auth().signOut().then(() => alert("Logged Out!"));
+        };
+    } else {
+        // User ලොග් වෙලා නැත්නම් බටන් එක Login වෙනවා
+        loginBtn.innerText = "LOGIN";
+        loginBtn.onclick = openAuthModal;
+    }
+});
+</script>
+
 </body>
 </html>
