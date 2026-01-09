@@ -223,56 +223,75 @@
 
 <section class="bg-gray-50 py-32 px-10 relative z-10">
     <div id="product-list" class="max-w-7xl mx-auto grid md:grid-cols-3 gap-y-24 gap-x-8">
-        </div>
+    </div>
 </section>
 
 <div id="order-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-lg rounded-[40px] overflow-hidden shadow-2xl transform transition-all">
         <div class="p-8">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-black text-[#4A3228] uppercase">Complete Your Order</h3>
+                <h3 class="text-2xl font-black text-[#4A3228] uppercase">Wholesale Order</h3>
                 <button onclick="closeModal()" class="text-gray-400 hover:text-black text-2xl">✕</button>
             </div>
 
             <form id="order-confirm-form" class="space-y-4">
-                <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-2xl mb-4">
-                    <img id="modal-img" src="" class="w-16 h-16 object-cover rounded-xl shadow-md">
-                    <div>
-                        <h4 id="modal-title" class="font-black text-[#4A3228]">Product Name</h4>
-                        <p id="modal-price" class="text-sm font-bold text-[#E0A142]">Rs 0.00</p>
+                <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-3xl mb-4 relative overflow-hidden">
+                    <img id="modal-img" src="" class="w-20 h-20 object-cover rounded-2xl shadow-md">
+                    <div class="flex-1">
+                        <h4 id="modal-title" class="font-black text-[#4A3228] text-lg">Product Name</h4>
+                        <div class="flex items-center gap-2">
+                            <span id="modal-normal-price" class="text-xs text-gray-400 line-through font-bold">Rs 0.00</span>
+                            <span id="discount-badge" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-green-500 text-white uppercase animate-pulse">0% OFF</span>
+                        </div>
+                        <p id="modal-price-display" class="text-2xl font-black text-[#E0A142]">Rs 0.00</p>
                     </div>
-                </div>
-
-                <div class="flex p-1 bg-gray-100 rounded-2xl">
-                    <button type="button" id="retail-btn" onclick="setOrderType('retail')" class="flex-1 py-3 rounded-xl font-bold text-sm transition-all bg-white shadow-sm text-[#4A3228]">Retail</button>
-                    <button type="button" id="wholesale-btn" onclick="setOrderType('wholesale')" class="flex-1 py-3 rounded-xl font-bold text-sm transition-all text-gray-500">Wholesale</button>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <input type="text" id="cust-name" placeholder="Full Name" class="w-full p-4 border rounded-2xl outline-none focus:ring-2 focus:ring-[#E0A142]" required>
                     <input type="tel" id="cust-phone" placeholder="Phone Number" class="w-full p-4 border rounded-2xl outline-none focus:ring-2 focus:ring-[#E0A142]" required>
                 </div>
-                
+
                 <textarea id="cust-address" placeholder="Delivery Address" rows="2" class="w-full p-4 border rounded-2xl outline-none focus:ring-2 focus:ring-[#E0A142]" required></textarea>
 
-                <div class="flex items-center justify-between bg-gray-50 p-4 rounded-2xl">
-                    <span class="font-bold text-[#4A3228]">Quantity:</span>
-                    <div class="flex items-center gap-4">
-                        <input type="number" id="order-qty" value="1" min="1" class="w-20 p-2 text-center font-black bg-transparent border-b-2 border-[#4A3228] outline-none">
+                <div class="bg-gray-50 p-5 rounded-3xl space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-[#4A3228]">Order Quantity:</span>
+                        <input type="number" id="order-qty" value="100" min="100" 
+                               oninput="updateDynamicPrice()" 
+                               class="w-24 p-2 text-center font-black bg-white rounded-xl border-2 border-gray-100 outline-none focus:border-[#E0A142]">
+                    </div>
+                    
+                    <div class="border-t border-dashed border-gray-200 pt-3 flex flex-col items-end">
+                        <span id="total-bill-label" class="text-xl font-black text-[#4A3228]">Total: Rs 0.00</span>
+                        <span id="savings-label" class="text-[11px] font-black text-green-600 uppercase tracking-widest bg-green-50 px-3 py-1 rounded-lg mt-1 hidden">
+                            You Save: Rs 0.00
+                        </span>
                     </div>
                 </div>
-                <p id="qty-warning" class="text-[10px] text-red-500 font-bold hidden text-center uppercase tracking-widest">* Wholesale orders must be 10 or more</p>
 
-                <button type="submit" class="w-full bg-[#4A3228] text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl hover:bg-black transition-all">
-                    Confirm & Order via WhatsApp
+                <button type="submit" id="submit-btn" class="w-full bg-[#4A3228] text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl hover:bg-black transition-all">
+                    Confirm Order
                 </button>
             </form>
+
+            <div id="success-view" class="hidden flex flex-col items-center justify-center py-12 transition-all duration-500">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-black text-[#4A3228] uppercase">Order Sent!</h3>
+                <p class="text-gray-500 text-sm mt-2">We will contact you shortly.</p>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Firebase Config
+    let currentCalculatedUnitPrice = 0;
+    let selectedProductBasePrice = 0; 
+
     const firebaseConfig = {
         apiKey: "AIzaSyAXoEgWEZM36nzBO0YmCVehTksNHzd3rT8",
         authDomain: "happy-drops-9bba9.firebaseapp.com",
@@ -284,66 +303,101 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-
     const productContainer = document.getElementById('product-list');
-    let currentType = 'retail';
 
-    // 1. Data Load & Render
+    // 1. Render Products (Strictly maintaining your UI)
     db.collection("products").onSnapshot((snapshot) => {
         productContainer.innerHTML = ""; 
         snapshot.forEach((doc) => {
             const p = doc.data();
-           const card = `
-<div class="group relative w-full max-w-[350px] mx-auto mt-24 transition-all duration-500 hover:-translate-y-4"> 
-    <div class="absolute left-1/2 transform -translate-x-1/2 -top-20 z-20 transition-all duration-500 group-hover:scale-110">
-        <div class="w-44 h-44 rounded-full border-[6px] border-white shadow-2xl overflow-hidden bg-white flex items-center justify-center">
-            <img src="${p.image}" class="w-full h-full object-cover" alt="${p.title2}">
-        </div>
-    </div>
+            const card = `
+            <div class="group relative w-full max-w-[350px] mx-auto mt-24 transition-all duration-500 hover:-translate-y-4"> 
+                <div class="absolute left-1/2 transform -translate-x-1/2 -top-20 z-20 transition-all duration-500 group-hover:scale-110">
+                    <div class="w-44 h-44 rounded-full border-[6px] border-white shadow-2xl overflow-hidden bg-white flex items-center justify-center">
+                        <img src="${p.image}" class="w-full h-full object-cover" alt="${p.title2}">
+                    </div>
+                </div>
+                <div class="rounded-[40px] p-8 pt-28 text-white text-center shadow-2xl relative flex flex-col items-center z-10 transition-all duration-500 group-hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)]" 
+                     style="background-color: ${p.bgColor || '#4A3228'}">
+                    
+                    <div class="absolute top-10 right-6 bg-white text-gray-800 p-3 rounded-2xl shadow-lg border-2 border-dashed border-gray-100 z-30">
+                        <div class="text-[10px] text-gray-400 font-bold uppercase leading-none">Normal Price</div>
+                        <div class="text-sm font-black">Rs ${parseFloat(p.price).toFixed(2)}</div>
+                    </div>
 
-    <div class="rounded-[40px] p-8 pt-28 text-white text-center shadow-2xl relative flex flex-col items-center z-10 transition-all duration-500 group-hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)]" 
-         style="background-color: ${p.bgColor || '#4A3228'}">
-        
-        <div class="absolute top-10 right-6 bg-white text-gray-800 p-3 rounded-2xl shadow-lg border-2 border-dashed border-gray-100 z-30">
-            <div class="text-[10px] text-gray-400 font-bold uppercase leading-none">Price</div>
-            <div class="text-sm font-black">Rs ${p.price}</div>
-        </div>
-
-        <div class="mt-4 w-full">
-            <p class="script-font text-3xl mb-1 leading-tight">${p.title1}</p>
-            
-            <h4 class="text-4xl font-black mb-4 tracking-tighter uppercase leading-[0.9] break-words">
-                ${p.title2}
-            </h4>
-            
-            <div class="flex justify-center items-center gap-1 mb-4">
-                <span class="text-yellow-300 text-lg">★★★★★</span>
-                <span class="font-bold ml-1">${p.rating || '4.5'}</span>
-            </div>
-
-            <p class="text-sm opacity-90 leading-relaxed mb-8 line-clamp-3 h-16 overflow-hidden">
-                ${p.description}
-            </p>
-
-            <button onclick="openOrderModal('${p.title2}', '${p.price}', '${p.image}')" 
-                    class="bg-[#3D2B1F] text-white px-10 py-4 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-white hover:text-[#3D2B1F] transition-all transform active:scale-95 shadow-lg">
-                Order Now
-            </button>
-        </div>
-    </div>
-</div>
-`;
+                    <div class="mt-4 w-full">
+                        <p class="script-font text-3xl mb-1 leading-tight">${p.title1}</p>
+                        <h4 class="text-4xl font-black mb-4 tracking-tighter uppercase leading-[0.9] break-words">${p.title2}</h4>
+                        <div class="flex justify-center items-center gap-1 mb-4">
+                            <span class="text-yellow-300 text-lg">★★★★★</span>
+                            <span class="font-bold ml-1">${p.rating || '4.5'}</span>
+                        </div>
+                        <p class="text-sm opacity-90 leading-relaxed mb-8 line-clamp-3 h-16 overflow-hidden">${p.description}</p>
+                        <button onclick="openOrderModal('${p.title2}', '${p.image}', ${p.price})" 
+                                class="bg-[#3D2B1F] text-white px-10 py-4 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-white hover:text-[#3D2B1F] transition-all transform active:scale-95 shadow-lg">
+                            Wholesale Order
+                        </button>
+                    </div>
+                </div>
+            </div>`;
             productContainer.innerHTML += card;
         });
     });
 
-    // 2. Modal Functions
-    function openOrderModal(title, price, img) {
+    // 2. Updated Logic: Highlighting Discounts and Savings
+    function updateDynamicPrice() {
+        const qtyInput = document.getElementById('order-qty');
+        const priceDisplay = document.getElementById('modal-price-display');
+        const totalLabel = document.getElementById('total-bill-label');
+        const savingsLabel = document.getElementById('savings-label');
+        const discountBadge = document.getElementById('discount-badge');
+        
+        let qty = parseInt(qtyInput.value) || 0;
+        let discountPercent = 0;
+
+        // Tiers Logic
+        if (qty >= 300) discountPercent = 28.5; 
+        else if (qty >= 250) discountPercent = 21.4;
+        else if (qty >= 200) discountPercent = 14.3;
+        else if (qty >= 150) discountPercent = 7.1;
+        else discountPercent = 0;
+
+        currentCalculatedUnitPrice = selectedProductBasePrice * (1 - (discountPercent / 100));
+        
+        // Update UI Prices
+        priceDisplay.innerText = `Rs ${currentCalculatedUnitPrice.toFixed(2)}`;
+        
+        const totalBill = qty * currentCalculatedUnitPrice;
+        const normalBill = qty * selectedProductBasePrice;
+        const savings = normalBill - totalBill;
+
+        totalLabel.innerText = `Total: Rs ${totalBill.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+
+        // Show/Hide Discount Highlights
+        if (discountPercent > 0) {
+            discountBadge.innerText = `${Math.round(discountPercent)}% OFF`;
+            discountBadge.classList.remove('hidden');
+            savingsLabel.innerText = `You Save: Rs ${savings.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            savingsLabel.classList.remove('hidden');
+        } else {
+            discountBadge.classList.add('hidden');
+            savingsLabel.classList.add('hidden');
+        }
+    }
+
+    function openOrderModal(title, img, price) {
+        selectedProductBasePrice = parseFloat(price);
         document.getElementById('modal-title').innerText = title;
-        document.getElementById('modal-price').innerText = '₹' + price;
         document.getElementById('modal-img').src = img;
+        document.getElementById('modal-normal-price').innerText = `Rs ${selectedProductBasePrice.toFixed(2)}`;
+        document.getElementById('order-qty').value = 100;
+        
+        updateDynamicPrice();
+        
+        document.getElementById('order-confirm-form').classList.remove('hidden');
+        document.getElementById('success-view').classList.add('hidden');
         document.getElementById('order-modal').classList.remove('hidden');
-        document.body.style.overflow = 'hidden'; // Stop scroll
+        document.body.style.overflow = 'hidden';
     }
 
     function closeModal() {
@@ -351,68 +405,41 @@
         document.body.style.overflow = 'auto';
     }
 
-    // 3. Wholesale/Retail Logic
-    function setOrderType(type) {
-        currentType = type;
-        const retailBtn = document.getElementById('retail-btn');
-        const wholesaleBtn = document.getElementById('wholesale-btn');
-        const qtyInput = document.getElementById('order-qty');
-        const warning = document.getElementById('qty-warning');
+    document.getElementById('order-confirm-form').onsubmit = async function(e) {
+        e.preventDefault();
+        const submitBtn = document.getElementById('submit-btn');
+        const form = document.getElementById('order-confirm-form');
+        const successView = document.getElementById('success-view');
 
-        if (type === 'wholesale') {
-            wholesaleBtn.classList.add('bg-white', 'shadow-sm', 'text-[#4A3228]');
-            retailBtn.classList.remove('bg-white', 'shadow-sm', 'text-[#4A3228]');
-            retailBtn.classList.add('text-gray-500');
-            qtyInput.value = 10;
-            qtyInput.min = 10;
-            warning.classList.remove('hidden');
-        } else {
-            retailBtn.classList.add('bg-white', 'shadow-sm', 'text-[#4A3228]');
-            wholesaleBtn.classList.remove('bg-white', 'shadow-sm', 'text-[#4A3228]');
-            wholesaleBtn.classList.add('text-gray-500');
-            qtyInput.value = 1;
-            qtyInput.min = 1;
-            warning.classList.add('hidden');
+        submitBtn.innerText = "PROCESSING...";
+        submitBtn.disabled = true;
+
+        try {
+            await db.collection("orders").add({
+                customerName: document.getElementById('cust-name').value,
+                phoneNumber: document.getElementById('cust-phone').value,
+                address: document.getElementById('cust-address').value,
+                productName: document.getElementById('modal-title').innerText,
+                quantity: parseInt(document.getElementById('order-qty').value),
+                unitPrice: currentCalculatedUnitPrice,
+                totalBill: parseInt(document.getElementById('order-qty').value) * currentCalculatedUnitPrice,
+                status: "Pending",
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            form.classList.add('hidden');
+            successView.classList.remove('hidden');
+            setTimeout(() => {
+                closeModal();
+                form.reset();
+                submitBtn.innerText = "Confirm Order";
+                submitBtn.disabled = false;
+            }, 2500);
+        } catch (error) {
+            alert("Error placing order.");
+            submitBtn.disabled = false;
         }
-    }
-
-   // 4. Form Submit (Order Handling - Firestore Edition)
-document.getElementById('order-confirm-form').onsubmit = async function(e) {
-    e.preventDefault();
-    
-    const name = document.getElementById('cust-name').value;
-    const phone = document.getElementById('cust-phone').value;
-    const addr = document.getElementById('cust-address').value;
-    const qty = document.getElementById('order-qty').value;
-    const pName = document.getElementById('modal-title').innerText;
-
-    // Validation for Wholesale
-    if (currentType === 'wholesale' && qty < 10) {
-        alert("Wholesale orders must be at least 10 units!");
-        return;
-    }
-
-    try {
-        // Order එක Firestore එකට එකතු කිරීම
-        await db.collection("orders").add({
-            customerName: name,
-            phoneNumber: phone,
-            address: addr,
-            productName: pName,
-            orderType: currentType,
-            quantity: parseInt(qty),
-            status: "Pending", // අලුත් order එකක් නිසා
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        alert("Order Placed Successfully! Admin will contact you.");
-        closeModal();
-        document.getElementById('order-confirm-form').reset();
-    } catch (error) {
-        console.error("Order Error: ", error);
-        alert("Something went wrong. Please try again.");
-    }
-};
+    };
 </script>
 
 <section class="relative bg-white py-24 px-10 overflow-hidden">
@@ -473,6 +500,8 @@ document.getElementById('order-confirm-form').onsubmit = async function(e) {
         
     </div>
 </section>
+
+
 
 <style>
     /* Infinite Scroll Animation */
