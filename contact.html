@@ -129,30 +129,37 @@
     </section>
 
     <section class="relative w-full bg-[#4A3228] pb-16 pt-32 px-10 overflow-hidden">
-        <div class="absolute top-0 left-[-0.5%] w-[101%] overflow-hidden leading-[0] z-0">
-            <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="relative block w-full h-[80px] md:h-[120px]" style="margin-top: -1px;">
-                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5,103.87-6.14,208,27.32,312.7,35,101.4,7.4,204.6-22.1,302.2-46.3c35.6-8.8,70.2-18,120.3-15.5V0H0Z" fill="#F9FAFB"></path>
-            </svg>
+    
+    <div class="absolute top-0 left-0 w-full overflow-hidden leading-[0]">
+        <svg class="relative block w-[calc(100%+1.3px)] h-[60px] md:h-[100px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5,73.84-4.36,147.54,16.88,218.2,35.26,69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113,2,1200,34.75V0Z" fill="#ffffff"></path>
+        </svg>
+    </div>
+
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10 relative z-10">
+        <div class="flex-1 text-center md:text-left">
+            <div class="inline-block bg-[#E0A142]/20 px-4 py-1 rounded-full mb-4">
+                <span class="text-[#E0A142] text-xs font-black uppercase tracking-widest">Newsletter</span>
+            </div>
+            <h3 class="text-white text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none mb-4">
+                Join the <span class="text-[#E0A142]">Flavor</span> Club
+            </h3>
+            <p class="text-gray-400 text-lg">Join the Happy Drops family for exclusive deals & sweet surprises.</p>
         </div>
 
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10 relative z-10">
-            <div class="flex-1 text-center md:text-left">
-                <div class="inline-block bg-[#E0A142]/20 px-4 py-1 rounded-full mb-4">
-                    <span class="text-[#E0A142] text-xs font-black uppercase tracking-widest">Newsletter</span>
-                </div>
-                <h3 class="text-white text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none mb-4">
-                    Join the <span class="text-[#E0A142]">Flavor</span> Club
-                </h3>
-                <p class="text-gray-400 text-lg">Join the Happy Drops family for exclusive deals & sweet surprises.</p>
-            </div>
-            <div class="w-full md:w-auto">
-                <form class="flex flex-col sm:flex-row gap-3">
-                    <input type="email" placeholder="Enter your email" class="bg-white/10 border-2 border-white/10 text-white px-8 py-5 rounded-2xl focus:outline-none focus:border-[#E0A142] w-full sm:w-96 transition-all placeholder:text-gray-500 font-medium">
-                    <button class="bg-[#E0A142] text-white px-10 py-5 rounded-2xl font-black uppercase text-sm tracking-[0.2em] hover:bg-white hover:text-[#4A3228] transition-all">Subscribe</button>
-                </form>
-            </div>
+        <div class="w-full md:w-auto">
+            <form class="flex flex-col sm:flex-row gap-3">
+                <input type="email" 
+                       placeholder="Enter your email address" 
+                       class="bg-white/10 border-2 border-white/10 text-white px-8 py-5 rounded-2xl focus:outline-none focus:border-[#E0A142] w-full sm:w-96 transition-all placeholder:text-gray-500 font-medium text-lg shadow-inner">
+                
+                <button class="bg-[#E0A142] text-white px-10 py-5 rounded-2xl font-black uppercase text-sm tracking-[0.2em] hover:bg-white hover:text-[#4A3228] transition-all whitespace-nowrap shadow-xl transform hover:-translate-y-1">
+                    Subscribe
+                </button>
+            </form>
         </div>
-    </section>
+    </div>
+</section>
 
      <footer class="hidden md:block bg-[#3D2B1F] text-white pt-24 pb-8 px-10 relative overflow-hidden">
     <div class="max-w-7xl mx-auto relative z-10">
