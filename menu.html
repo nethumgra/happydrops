@@ -208,7 +208,7 @@
                         <img id="modal-img" src="" class="w-16 h-16 object-cover rounded-xl shadow-md">
                         <div>
                             <h4 id="modal-title" class="font-black text-[#4A3228]">Product Name</h4>
-                            <p id="modal-price" class="text-sm font-bold text-[#E0A142]">₹0.00</p>
+                            <p id="modal-price" class="text-sm font-bold text-[#E0A142]">Rs 0.00</p>
                         </div>
                     </div>
                     <div class="flex p-1 bg-gray-100 rounded-2xl">
@@ -276,7 +276,7 @@
         // Modal Logic
         function openOrderModal(title, price, img) {
             document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-price').innerText = '₹' + price;
+            document.getElementById('modal-price').innerText = 'Rs ' + price;
             document.getElementById('modal-img').src = img;
             document.getElementById('order-modal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
