@@ -115,47 +115,47 @@
         </div>
     </section>
 
-    <footer class="hidden md:block bg-[#3D2B1F] text-white pt-24 pb-8 px-10 relative overflow-hidden">
-        <div class="max-w-7xl mx-auto relative z-10">
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-16 pb-20">
-                <div class="md:col-span-4 space-y-8">
-                    <div>
-                        <h2 class="font-montserrat font-black text-4xl tracking-tighter leading-none mb-2">
-                            HAPPY<span class="text-[#E0A142]">DROPS.</span>
-                        </h2>
-                        <p class="text-[#859431] font-bold text-xs uppercase tracking-[0.4em]">Premium Biryani UI</p>
-                    </div>
-                    <p class="text-gray-400 text-sm leading-relaxed max-w-sm">
-                        Crafting extraordinary culinary experiences with the finest spices and traditional secrets.
-                    </p>
+   <footer class="hidden md:block bg-[#3D2B1F] text-white pt-24 pb-8 px-10 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto relative z-10">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-16 pb-20">
+            <div class="md:col-span-4 space-y-8">
+                <div>
+                    <h2 class="font-montserrat font-black text-4xl tracking-tighter leading-none mb-2">
+                        HAPPY<span class="text-[#E0A142]">DROPS.</span>
+                    </h2>
+                    <p class="text-[#859431] font-bold text-xs uppercase tracking-[0.4em]">Premium Biryani UI</p>
                 </div>
-                <div class="md:col-span-2 space-y-8">
-                    <h4 class="text-white font-bold text-sm uppercase tracking-widest">Explore</h4>
-                    <ul class="space-y-4">
-                        <li><a href="index.html" class="text-gray-500 hover:text-[#E0A142] text-sm transition-colors">Home</a></li>
-                        <li><a href="menu.html" class="text-gray-500 hover:text-[#E0A142] text-sm transition-colors">Menu</a></li>
-                    </ul>
-                </div>
-                <div class="md:col-span-3 space-y-8">
-                    <h4 class="text-white font-bold text-sm uppercase tracking-widest">Contact</h4>
-                    <div class="space-y-4">
-                        <p class="text-gray-500 text-sm">No 123, Biryani Avenue, Colombo 07</p>
-                        <p class="text-[#E0A142] font-black text-lg">+94 71 612 4040</p>
-                    </div>
-                </div>
-                <div class="md:col-span-3 bg-white/5 p-8 rounded-[30px] border border-white/5">
-                    <h4 class="text-white font-bold text-sm uppercase tracking-widest mb-6">Service Hours</h4>
-                    <div class="space-y-3">
-                        <div class="flex justify-between text-xs text-gray-400"><span>WEEKDAYS</span><span>10:00 - 22:00</span></div>
-                        <div class="flex justify-between text-xs text-gray-400"><span>WEEKENDS</span><span class="text-[#E0A142] font-bold">09:00 - 23:00</span></div>
-                    </div>
+                <p class="text-gray-400 text-sm leading-relaxed max-w-sm">
+                    Crafting extraordinary culinary experiences with the finest spices and traditional secrets.
+                </p>
+            </div>
+            <div class="md:col-span-2 space-y-8">
+                <h4 class="text-white font-bold text-sm uppercase tracking-widest">Explore</h4>
+                <ul class="space-y-4">
+                    <li><a href="index.html" class="text-gray-500 hover:text-[#E0A142] text-sm transition-colors">Home</a></li>
+                    <li><a href="menu.html" class="text-gray-500 hover:text-[#E0A142] text-sm transition-colors">Menu</a></li>
+                </ul>
+            </div>
+            <div class="md:col-span-3 space-y-8">
+                <h4 class="text-white font-bold text-sm uppercase tracking-widest">Contact</h4>
+                <div class="space-y-4">
+                    <p class="text-gray-500 text-sm leading-relaxed">4/18B Ayurveda Lane,<br>Colombo Road, Kurunegala</p>
+                    <p class="text-[#E0A142] font-black text-lg">+94 71 458 3560</p>
                 </div>
             </div>
-            <div class="pt-10 border-t border-white/5 flex justify-between items-center">
-                <p class="text-gray-600 text-[10px] font-bold uppercase tracking-[0.3em]">© 2026 HAPPY DROPS PREMIUM. ALL RIGHTS RESERVED.</p>
+            <div class="md:col-span-3 bg-white/5 p-8 rounded-[30px] border border-white/5 text-center flex flex-col justify-center">
+                <h4 class="text-white font-bold text-sm uppercase tracking-widest mb-4">Service Hours</h4>
+                <div class="space-y-3">
+                    <p class="text-[#E0A142] font-black text-3xl">24/7</p>
+                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">Open Every Day</p>
+                </div>
             </div>
         </div>
-    </footer>
+        <div class="pt-10 border-t border-white/5 flex justify-between items-center">
+            <p class="text-gray-600 text-[10px] font-bold uppercase tracking-[0.3em]">© 2026 HAPPY DROPS PREMIUM. ALL RIGHTS RESERVED.</p>
+        </div>
+    </div>
+</footer>
 <div class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-100 flex justify-around items-center py-3 z-[100] md:hidden shadow-[0_-8px_30px_rgba(0,0,0,0.08)]">
     
     <a href="index.html" class="flex flex-col items-center gap-1 group transition-all">
@@ -248,29 +248,30 @@
         let currentType = 'retail';
 
         // Load Products and Render Cards
-        db.collection("products").onSnapshot((snapshot) => {
-            menuContainer.innerHTML = ""; 
-            snapshot.forEach((doc) => {
-                const p = doc.data();
-                menuContainer.innerHTML += `
-                    <div class="product-card-container relative group">
-                        <div class="product-circle shadow-2xl transition-transform duration-500 group-hover:scale-110">
-                            <img src="${p.image}" alt="${p.title2}">
-                        </div>
-                        <div class="rounded-[50px] p-8 pt-28 text-center shadow-xl relative" style="background-color: ${p.bgColor || '#4A3228'}">
-                            <div class="price-badge-mini">
-                                <div class="text-sm font-black text-[#4A3228]">₹${p.price}</div>
-                            </div>
-                            <div class="text-white">
-                                <p class="script-font text-2xl mb-1">${p.title1}</p>
-                                <h4 class="text-3xl font-black mb-4 uppercase font-montserrat">${p.title2}</h4>
-                                <p class="text-xs opacity-80 mb-8 line-clamp-3">${p.description || ''}</p>
-                                <button onclick="openOrderModal('${p.title2}', '${p.price}', '${p.image}')" class="bg-white text-[#4A3228] px-10 py-4 rounded-2xl text-xs font-black uppercase hover:bg-[#E0A142] hover:text-white transition-all">Order Now</button>
-                            </div>
-                        </div>
-                    </div>`;
-            });
-        });
+       db.collection("products").onSnapshot((snapshot) => {
+    menuContainer.innerHTML = ""; 
+    snapshot.forEach((doc) => {
+        const p = doc.data();
+        menuContainer.innerHTML += `
+            <div class="product-card-container relative group">
+                <div class="product-circle shadow-2xl">
+                    <img src="${p.image}" alt="${p.title2}">
+                </div>
+                
+                <div class="rounded-[50px] p-8 pt-28 text-center shadow-xl relative" style="background-color: ${p.bgColor || '#4A3228'}">
+                    <div class="price-badge-mini">
+                        <div class="text-sm font-black text-[#4A3228]">Rs ${p.price}</div>
+                    </div>
+                    <div class="text-white">
+                        <p class="script-font text-2xl mb-1">${p.title1}</p>
+                        <h4 class="text-3xl font-black mb-4 uppercase font-montserrat">${p.title2}</h4>
+                        <p class="text-xs opacity-80 mb-8 line-clamp-3">${p.description || ''}</p>
+                        <button onclick="openOrderModal('${p.title2}', '${p.price}', '${p.image}')" class="bg-white text-[#4A3228] px-10 py-4 rounded-2xl text-xs font-black uppercase hover:bg-[#E0A142] hover:text-white transition-all">Order Now</button>
+                    </div>
+                </div>
+            </div>`;
+    });
+});
 
         // Modal Logic
         function openOrderModal(title, price, img) {
