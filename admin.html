@@ -7,6 +7,7 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
@@ -89,7 +90,42 @@
     </style>
 </head>
 
-<body class="min-h-screen flex flex-col md:flex-row">
+<body class="min-h-screen flex flex-col md:flex-row overflow-hidden relative">
+
+    <!-- AUTHENTICATION OVERLAY -->
+    <div id="auth-overlay" class="fixed inset-0 bg-[#4A3228] z-[9999] flex flex-col items-center justify-center p-4 transition-opacity duration-500">
+        <div class="text-center mb-8">
+            <div class="w-16 h-16 bg-[#E0A142] rounded-2xl flex items-center justify-center font-black text-white text-3xl mx-auto mb-4 shadow-xl">H</div>
+            <h1 class="text-3xl font-black text-white uppercase tracking-widest">Happy Drops</h1>
+            <p class="text-[#E0A142] font-bold text-sm tracking-widest mt-2">SECURE ADMIN PORTAL</p>
+        </div>
+        
+        <div class="bg-white p-10 rounded-[40px] shadow-2xl w-full max-w-md">
+            <h2 class="text-2xl font-black text-[#4A3228] mb-6 text-center">System Login</h2>
+            
+            <form id="login-form" class="space-y-5">
+                <div>
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2 block mb-1">Email Address</label>
+                    <input type="email" id="login-email" class="w-full p-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-[#E0A142] outline-none transition-all font-semibold" required>
+                </div>
+                <div>
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2 block mb-1">Password</label>
+                    <div class="relative">
+                        <input type="password" id="login-password" class="w-full p-4 pr-12 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-[#E0A142] outline-none transition-all font-semibold" required>
+                        <button type="button" onclick="togglePassword()" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#E0A142] transition-colors focus:outline-none">
+                            <svg id="eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="login-error" class="hidden bg-red-50 text-red-500 text-xs font-bold p-3 rounded-xl text-center"></div>
+                
+                <button type="submit" id="login-btn" class="w-full bg-[#E0A142] text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl hover:shadow-orange-200 hover:scale-[1.02] transition-all">
+                    Authenticate
+                </button>
+            </form>
+        </div>
+    </div>
 
     <header class="md:hidden bg-[#4A3228] text-white p-5 flex justify-between items-center sticky top-0 z-[100] shadow-2xl">
         <div class="flex items-center gap-3">
@@ -139,16 +175,21 @@
         </nav>
 
         <div class="p-8 border-t border-white/5 bg-black/10">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-400 to-yellow-200 p-0.5">
-                    <img src="https://ui-avatars.com/api/?name=Admin&background=4A3228&color=fff" class="rounded-full border-2 border-[#4A3228]">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-400 to-yellow-200 p-0.5">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=4A3228&color=fff" class="rounded-full border-2 border-[#4A3228]">
+                    </div>
+                    <div>
+                        <p class="text-xs font-black">System Administrator</p>
+                        <p class="text-[10px] text-green-400 font-bold flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span> Online
+                        </p>
+                    </div>
                 </div>
-                <div>
-                    <p class="text-xs font-black">System Administrator</p>
-                    <p class="text-[10px] text-green-400 font-bold flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span> Online
-                    </p>
-                </div>
+                <button onclick="logoutAdmin()" class="text-red-400 hover:text-red-500 hover:bg-white/10 p-2 rounded-xl transition-all" title="Logout">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                </button>
             </div>
         </div>
     </aside>
@@ -211,7 +252,7 @@
                             <div class="grid grid-cols-2 gap-4">
                                 <div class="space-y-1">
                                     <label class="text-[10px] font-black text-gray-400 uppercase ml-2">Selling Price</label>
-                                    <input type="number" id="price" placeholder="₹ 450" class="w-full p-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-orange-400 outline-none transition-all text-sm font-black" required>
+                                    <input type="number" id="price" placeholder="Rs 450" class="w-full p-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-orange-400 outline-none transition-all text-sm font-black" required>
                                 </div>
                                 <div class="space-y-1">
                                     <label class="text-[10px] font-black text-gray-400 uppercase ml-2">Old Price</label>
@@ -337,15 +378,17 @@
     <script>
         /* --- 1. FIREBASE INITIALIZATION --- */
         const firebaseConfig = { 
-            apiKey: "AIzaSyAXoEgWEZM36nzBO0YmCVehTksNHzd3rT8", 
-            authDomain: "happy-drops-9bba9.firebaseapp.com", 
-            projectId: "happy-drops-9bba9", 
-            storageBucket: "happy-drops-9bba9.firebasestorage.app", 
-            messagingSenderId: "337314308860", 
-            appId: "1:337314308860:web:05f148a54b5678dac2ad79" 
+            apiKey: "AIzaSyBDMP96Ta6l_9J-4opkXyJYietA0MxsZJs", 
+            authDomain: "happydrops-3d5cb.firebaseapp.com", 
+            projectId: "happydrops-3d5cb", 
+            storageBucket: "happydrops-3d5cb.firebasestorage.app", 
+            messagingSenderId: "245969277538", 
+            appId: "1:245969277538:web:ce1a0a76e0b9a9e8b4f73b",
+            measurementId: "G-DQGQVP26Q6"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        const auth = firebase.auth();
         const IMGBB_API_KEY = "7570dd50a07cac8d3be44e477a63c201";
 
         /* --- 2. GLOBAL UI CONTROLS --- */
@@ -452,14 +495,17 @@
                         <div class="glass-tag absolute top-14 right-8 px-5 py-2.5 rounded-2xl shadow-lg text-[#4A3228] rotate-12 font-black">
                             <div class="text-[8px] opacity-40 leading-none uppercase">Best Offer</div>
                             <div class="text-lg">Rs ${p}</div>
+                            ${document.getElementById('oldPrice').value ? `<div class="text-[10px] line-through text-gray-500">Rs ${document.getElementById('oldPrice').value}</div>` : ''}
                         </div>
 
                         <p class="script-font text-4xl mb-2 opacity-95">${t1}</p>
-                        <h4 class="text-4xl font-black mb-6 uppercase tracking-tighter leading-[0.85]">${t2}</h4>
+                        <h4 class="text-4xl font-black mb-4 uppercase tracking-tighter leading-[0.85]">${t2}</h4>
                         
-                        <div class="flex justify-center gap-1 mb-8 text-yellow-300 text-[10px]">
+                        <div class="flex justify-center gap-1 mb-4 text-yellow-300 text-[10px]">
                             ★★★★★ <span class="text-white font-bold ml-1 opacity-80">5.0 (4.2k)</span>
                         </div>
+                        
+                        <p class="text-[10px] opacity-90 leading-relaxed mb-6 line-clamp-3 h-12 overflow-hidden px-4">${document.getElementById('desc').value || 'Product description will appear here...'}</p>
                         
                         <button type="button" class="bg-[#2D1B10] text-white w-full py-5 rounded-[30px] text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl active:scale-95 transition-transform">
                             Add to Cart
@@ -469,7 +515,7 @@
         }
 
         // Live input listeners
-        ['t1', 't2', 'price'].forEach(id => {
+        ['t1', 't2', 'price', 'oldPrice', 'desc'].forEach(id => {
             document.getElementById(id).addEventListener('input', updatePreview);
         });
 
@@ -509,43 +555,6 @@
                 submitBtn.disabled = false;
             }
         };
-
-        // Real-time Inventory Listener
-        db.collection("products").orderBy("createdAt", "desc").onSnapshot(snap => {
-            const list = document.getElementById('admin-product-list');
-            const statP = document.getElementById('stat-products');
-            const countBadge = document.getElementById('list-count');
-            
-            list.innerHTML = "";
-            statP.innerText = snap.size;
-            countBadge.innerText = `${snap.size} Items`;
-
-            snap.forEach(doc => {
-                const p = doc.data();
-                list.innerHTML += `
-                    <div class="p-6 flex justify-between items-center hover:bg-orange-50/30 transition-all group">
-                        <div class="flex items-center gap-5">
-                            <div class="relative">
-                                <img src="${p.image}" class="w-16 h-16 rounded-[20px] object-cover shadow-lg group-hover:scale-110 transition-transform duration-500">
-                                <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white" style="background-color: ${p.bgColor}"></div>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-black text-[#4A3228]">${p.title2}</h4>
-                                <p class="text-[11px] font-bold text-orange-500">Rs ${p.price} <span class="text-gray-300 line-through ml-2">₹${p.oldPrice || ''}</span></p>
-                            </div>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="editProduct('${doc.id}')" class="p-3 bg-blue-50 text-blue-500 rounded-xl hover:bg-blue-500 hover:text-white transition-all">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                            </button>
-                            <button onclick="deleteProduct('${doc.id}')" class="p-3 bg-red-50 text-red-300 rounded-xl hover:bg-red-500 hover:text-white transition-all">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
-                        </div>
-                    </div>`;
-            });
-        });
-
         /* --- 7. EDIT/DELETE HELPER FUNCTIONS --- */
         window.editProduct = async (id) => {
             const doc = await db.collection("products").doc(id).get();
@@ -560,8 +569,11 @@
             
             picker.value = p.bgColor;
             hex.value = p.bgColor;
-            selector.value = 'custom';
+            const exists = Array.from(selector.options).some(opt => opt.value === p.bgColor);
+            selector.value = exists ? p.bgColor : 'custom';
             document.getElementById('desc').value = p.description || '';
+            
+            document.getElementById('upload-status').innerHTML = `<span class="text-green-500 font-black tracking-widest">✅ ASSET READY</span>`;
             
             document.getElementById('form-title').innerText = "Update Listing";
             document.getElementById('submit-btn').innerText = "Confirm Update";
@@ -578,7 +590,7 @@
             }
         };
 
-        function resetForm() {
+        window.resetForm = () => {
             productForm.reset();
             document.getElementById('product-id').value = "";
             document.getElementById('imgUrl').value = "";
@@ -591,57 +603,169 @@
             hex.value = "#859431";
             selector.value = "#859431";
             updatePreview();
+        };
+
+        /* --- 9. AUTHENTICATION & INITIALIZATION --- */
+        const authOverlay = document.getElementById('auth-overlay');
+        const loginForm = document.getElementById('login-form');
+        const loginBtn = document.getElementById('login-btn');
+        const loginError = document.getElementById('login-error');
+        let dashboardInitialized = false;
+
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    if (userDoc.exists && userDoc.data().role === 'admin') {
+                        authOverlay.classList.add('opacity-0', 'pointer-events-none');
+                        setTimeout(() => authOverlay.classList.add('hidden'), 500);
+                        if (!dashboardInitialized) {
+                            initDashboard();
+                            dashboardInitialized = true;
+                        }
+                    } else {
+                        showLoginError("Access Denied: You do not have admin privileges.");
+                        auth.signOut();
+                    }
+                } catch (error) {
+                    showLoginError("Error verifying role. Please check rules.");
+                    auth.signOut();
+                }
+            } else {
+                authOverlay.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
+                dashboardInitialized = false;
+            }
+        });
+
+        loginForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            loginBtn.innerText = "AUTHENTICATING...";
+            loginBtn.disabled = true;
+            loginError.classList.add('hidden');
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+            } catch (error) {
+                showLoginError(error.message);
+            } finally {
+                loginBtn.innerText = "Authenticate";
+                loginBtn.disabled = false;
+            }
+        };
+
+        window.togglePassword = () => {
+            const pwd = document.getElementById('login-password');
+            const icon = document.getElementById('eye-icon');
+            if(pwd.type === 'password') {
+                pwd.type = 'text';
+                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>`;
+            } else {
+                pwd.type = 'password';
+                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>`;
+            }
+        };
+
+        function showLoginError(msg) {
+            loginError.innerText = msg;
+            loginError.classList.remove('hidden');
         }
 
-        /* --- 8. ORDER TRACKING SYSTEM --- */
-        db.collection("orders").orderBy("createdAt", "desc").onSnapshot(snap => {
-            const list = document.getElementById('admin-order-list');
-            const badge = document.getElementById('order-badge');
-            const statO = document.getElementById('stat-orders');
-            const empty = document.getElementById('empty-orders');
-            
-            list.innerHTML = "";
-            badge.innerText = snap.size;
-            badge.classList.toggle('hidden', snap.empty);
-            statO.innerText = snap.size;
-            empty.classList.toggle('hidden', !snap.empty);
+        window.logoutAdmin = () => {
+            if(confirm("Are you sure you want to log out?")) {
+                auth.signOut();
+            }
+        };
 
-            snap.forEach(doc => {
-                const o = doc.data();
-                const statusColor = o.status === 'Pending' ? 'text-red-500 bg-red-50' : 'text-green-500 bg-green-50';
+        function initDashboard() {
+            // Real-time Inventory Listener
+            db.collection("products").orderBy("createdAt", "desc").onSnapshot(snap => {
+                const list = document.getElementById('admin-product-list');
+                const statP = document.getElementById('stat-products');
+                const countBadge = document.getElementById('list-count');
                 
-                list.innerHTML += `
-                    <tr class="hover:bg-gray-50/50 transition-all">
-                        <td class="px-10 py-8">
-                            <div class="font-black text-[#4A3228] mb-1">${o.customerName}</div>
-                            <div class="text-xs font-bold text-blue-500">${o.phoneNumber}</div>
-                            <div class="text-[10px] text-gray-400 mt-2 italic max-w-xs">${o.address || 'Standard Delivery'}</div>
-                        </td>
-                        <td class="px-10 py-8">
-                            <div class="text-xs font-black uppercase tracking-tight text-gray-600">${o.productName}</div>
-                            <div class="text-[10px] text-gray-400 font-bold">Transaction ID: ${doc.id.substring(0,8)}</div>
-                        </td>
-                        <td class="px-10 py-8">
-                            <span class="px-4 py-1.5 bg-gray-100 rounded-full text-[9px] font-black uppercase text-gray-500 border border-gray-200">
-                                ${o.orderType || 'Retail'} • x${o.quantity || 1}
-                            </span>
-                        </td>
-                        <td class="px-10 py-8">
-                            <span class="px-4 py-1.5 rounded-xl text-[10px] font-black uppercase ${statusColor}">
-                                ${o.status || 'Received'}
-                            </span>
-                        </td>
-                        <td class="px-10 py-8 text-right whitespace-nowrap">
-                            <button onclick="markAsDone('${doc.id}')" class="bg-green-500 text-white p-3 rounded-2xl hover:bg-green-600 shadow-lg hover:shadow-green-100 transition-all mr-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                            </button>
-                            <button onclick="removeOrder('${doc.id}')" class="bg-gray-100 text-gray-400 p-3 rounded-2xl hover:bg-red-100 hover:text-red-500 transition-all">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            </button>
-                        </td>
-                    </tr>`;
+                list.innerHTML = "";
+                statP.innerText = snap.size;
+                countBadge.innerText = `${snap.size} Items`;
+
+                snap.forEach(doc => {
+                    const p = doc.data();
+                    list.innerHTML += `
+                        <div class="p-6 flex justify-between items-center hover:bg-orange-50/30 transition-all group">
+                            <div class="flex items-center gap-5">
+                                <div class="relative">
+                                    <img src="${p.image}" class="w-16 h-16 rounded-[20px] object-cover shadow-lg group-hover:scale-110 transition-transform duration-500">
+                                    <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white" style="background-color: ${p.bgColor}"></div>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-black text-[#4A3228]">${p.title2}</h4>
+                                    <p class="text-[11px] font-bold text-orange-500">Rs ${p.price} ${p.oldPrice ? `<span class="text-gray-300 line-through ml-2">Rs ${p.oldPrice}</span>` : ''}</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="editProduct('${doc.id}')" class="p-3 bg-blue-50 text-blue-500 rounded-xl hover:bg-blue-500 hover:text-white transition-all">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                </button>
+                                <button onclick="deleteProduct('${doc.id}')" class="p-3 bg-red-50 text-red-300 rounded-xl hover:bg-red-500 hover:text-white transition-all">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </div>
+                        </div>`;
+                });
             });
-        });
+
+            /* --- 8. ORDER TRACKING SYSTEM --- */
+            db.collection("orders").orderBy("createdAt", "desc").onSnapshot(snap => {
+                const list = document.getElementById('admin-order-list');
+                const badge = document.getElementById('order-badge');
+                const statO = document.getElementById('stat-orders');
+                const empty = document.getElementById('empty-orders');
+                
+                list.innerHTML = "";
+                badge.innerText = snap.size;
+                badge.classList.toggle('hidden', snap.empty);
+                statO.innerText = snap.size;
+                empty.classList.toggle('hidden', !snap.empty);
+
+                snap.forEach(doc => {
+                    const o = doc.data();
+                    const statusColor = o.status === 'Pending' ? 'text-red-500 bg-red-50' : 'text-green-500 bg-green-50';
+                    
+                    list.innerHTML += `
+                        <tr class="hover:bg-gray-50/50 transition-all">
+                            <td class="px-10 py-8">
+                                <div class="font-black text-[#4A3228] mb-1">${o.customerName}</div>
+                                <div class="text-xs font-bold text-blue-500">${o.phoneNumber}</div>
+                                <div class="text-[10px] text-gray-400 mt-2 italic max-w-xs">${o.address || 'Standard Delivery'}</div>
+                            </td>
+                            <td class="px-10 py-8">
+                                <div class="text-xs font-black uppercase tracking-tight text-gray-600">${o.productName}</div>
+                                <div class="text-[10px] text-gray-400 font-bold">Transaction ID: ${doc.id.substring(0,8)}</div>
+                            </td>
+                            <td class="px-10 py-8">
+                                <span class="px-4 py-1.5 bg-gray-100 rounded-full text-[9px] font-black uppercase text-gray-500 border border-gray-200">
+                                    ${o.orderType || 'Retail'} • x${o.quantity || 1}
+                                </span>
+                            </td>
+                            <td class="px-10 py-8">
+                                <span class="px-4 py-1.5 rounded-xl text-[10px] font-black uppercase ${statusColor}">
+                                    ${o.status || 'Received'}
+                                </span>
+                            </td>
+                            <td class="px-10 py-8 text-right whitespace-nowrap">
+                                <button onclick="markAsDone('${doc.id}')" class="bg-green-500 text-white p-3 rounded-2xl hover:bg-green-600 shadow-lg hover:shadow-green-100 transition-all mr-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </button>
+                                <button onclick="removeOrder('${doc.id}')" class="bg-gray-100 text-gray-400 p-3 rounded-2xl hover:bg-red-100 hover:text-red-500 transition-all">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </td>
+                        </tr>`;
+                });
+            });
+        }
 
         window.markAsDone = (id) => db.collection("orders").doc(id).update({ status: "Completed" });
         window.removeOrder = (id) => confirm("Archive this order?") && db.collection("orders").doc(id).delete();

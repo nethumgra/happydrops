@@ -293,12 +293,13 @@
     let selectedProductBasePrice = 0; 
 
     const firebaseConfig = {
-        apiKey: "AIzaSyAXoEgWEZM36nzBO0YmCVehTksNHzd3rT8",
-        authDomain: "happy-drops-9bba9.firebaseapp.com",
-        projectId: "happy-drops-9bba9",
-        storageBucket: "happy-drops-9bba9.firebasestorage.app",
-        messagingSenderId: "337314308860",
-        appId: "1:337314308860:web:05f148a54b5678dac2ad79"
+        apiKey: "AIzaSyBDMP96Ta6l_9J-4opkXyJYietA0MxsZJs",
+        authDomain: "happydrops-3d5cb.firebaseapp.com",
+        projectId: "happydrops-3d5cb",
+        storageBucket: "happydrops-3d5cb.firebasestorage.app",
+        messagingSenderId: "245969277538",
+        appId: "1:245969277538:web:ce1a0a76e0b9a9e8b4f73b",
+        measurementId: "G-DQGQVP26Q6"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -320,7 +321,7 @@
                 </div>
 
                 <div class="absolute -bottom-0.5 -right-14 bg-white text-gray-800 px-5 py-2 rounded-full shadow-xl border-2 border-dashed border-gray-100 z-30 flex flex-col items-center justify-center">
-                    <div class="text-[9px] text-gray-400 font-bold uppercase leading-none"></div>
+                    ${p.oldPrice ? `<div class="text-[10px] text-gray-400 font-bold uppercase leading-none line-through">Rs ${p.oldPrice}</div>` : `<div class="text-[9px] text-gray-400 font-bold uppercase leading-none">Price</div>`}
                     <div class="text-base font-black text-[#3D2B1F]">Rs ${parseFloat(p.price).toFixed(0)}</div>
                 </div>
             </div>
